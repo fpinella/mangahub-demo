@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>MangaHub</title>
+<meta name="theme-color" content="#08080c">
+<meta name="description" content="MangaHub — a reader so good that paying beats pirating.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MangaHub">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<style>
+  :root{
+    --bg:#08080c; --surface:#13131c; --surface-2:#1c1c28; --surface-3:#262635;
+    --border:rgba(255,255,255,.08); --border-2:rgba(255,255,255,.14);
+    --text:#f3f3f8; --muted:#9696a8; --faint:#62626f;
+    --accent:#7c5cff; --accent-2:#ff4d8d; --gold:#ffcf6b; --green:#3ddc97;
+    --grad:linear-gradient(135deg,#7c5cff 0%,#ff4d8d 100%);
+    --grad-gold:linear-gradient(135deg,#ffcf6b,#ff9d5c);
+    --shadow:0 20px 60px rgba(0,0,0,.55);
+    --r:18px;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    background:radial-gradient(1200px 700px at 50% -10%,#1a1430 0%,#0a0a10 45%,#070709 100%);
+    color:var(--text);display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:24px;gap:40px;overflow-x:hidden;
+  }
+  .stage{display:flex;align-items:center;gap:48px;flex-wrap:wrap;justify-content:center}
+  .pitch{max-width:330px}
+  .pitch .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:24px;letter-spacing:-.5px;margin-bottom:18px}
+  .pitch .logo .mark{width:34px;height:34px;border-radius:9px;background:var(--grad);display:grid;place-items:center;font-size:18px}
+  .pitch h1{font-size:30px;line-height:1.15;letter-spacing:-1px;margin-bottom:14px;font-weight:800}
+  .pitch h1 .hl{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .pitch p{color:var(--muted);font-size:14.5px;line-height:1.6;margin-bottom:16px}
+  .pitch .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+  .pitch .tags span{font-size:11.5px;color:var(--text);background:var(--surface-2);border:1px solid var(--border);padding:6px 11px;border-radius:999px}
+  .pitch .hint{font-size:12px;color:var(--faint);display:flex;align-items:center;gap:7px}
+  .pitch .hint b{color:var(--accent)}
+
+  /* phone frame */
+  .phone{
+    width:392px;height:840px;max-height:92vh;background:#000;border-radius:46px;
+    padding:11px;box-shadow:var(--shadow),0 0 0 2px #2a2a35,0 0 0 11px #111118;
+    position:relative;flex:0 0 auto;
+  }
+  .screen{
+    position:relative;width:100%;height:100%;background:var(--bg);border-radius:36px;
+    overflow:hidden;display:flex;flex-direction:column;
+  }
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:128px;height:30px;background:#000;border-radius:0 0 18px 18px;z-index:60}
+  .statusbar{height:46px;flex:0 0 auto;display:flex;align-items:flex-end;justify-content:space-between;padding:0 22px 6px;font-size:13px;font-weight:600;z-index:55}
+  .statusbar .right{display:flex;gap:6px;align-items:center}
+
+  .view{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:96px}
+  .view::-webkit-scrollbar{display:none}
+  .topbar{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,rgba(8,8,12,.96),rgba(8,8,12,.78) 70%,transparent);backdrop-filter:blur(12px);padding:6px 18px 12px;display:flex;align-items:center;justify-content:space-between}
+  .topbar h2{font-size:22px;font-weight:800;letter-spacing:-.5px}
+  .topbar .acts{display:flex;gap:14px;align-items:center}
+  .iconbtn{width:34px;height:34px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border);display:grid;place-items:center;cursor:pointer;color:var(--text);transition:.15s}
+  .iconbtn:active{transform:scale(.92)}
+  .avatar{width:34px;height:34px;border-radius:50%;background:var(--grad);display:grid;place-items:center;font-weight:700;font-size:14px;cursor:pointer}
+
+  /* hero */
+  .hero{margin:4px 18px 8px;border-radius:22px;overflow:hidden;position:relative;height:236px;cursor:pointer}
+  .hero .art{position:absolute;inset:0}
+  .hero .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,8,12,0) 30%,rgba(8,8,12,.55) 65%,rgba(8,8,12,.96) 100%)}
+  .hero .meta{position:absolute;left:18px;right:18px;bottom:16px}
+  .hero .badge{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;background:rgba(124,92,255,.22);border:1px solid rgba(124,92,255,.5);color:#cbbcff;padding:4px 9px;border-radius:999px;margin-bottom:9px;backdrop-filter:blur(6px)}
+  .hero h3{font-size:25px;font-weight:800;letter-spacing:-.6px;line-height:1.05;margin-bottom:5px}
+  .hero .sub{font-size:12.5px;color:#c7c7d4}
+  .hero .cta{margin-top:13px;display:flex;gap:9px}
+  .btn{border:none;cursor:pointer;font-weight:700;font-size:13.5px;border-radius:12px;padding:11px 16px;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:.15s;color:#fff}
+  .btn:active{transform:scale(.96)}
+  .btn.primary{background:var(--grad)}
+  .btn.glass{background:rgba(255,255,255,.1);border:1px solid var(--border-2);backdrop-filter:blur(8px)}
+  .btn.gold{background:var(--grad-gold);color:#3a2400}
+  .btn.block{width:100%}
+  .btn.sm{padding:8px 13px;font-size:12.5px;border-radius:10px}
+
+  .section{margin-top:20px}
+  .section .head{display:flex;align-items:center;justify-content:space-between;padding:0 18px 11px}
+  .section .head h4{font-size:16.5px;font-weight:800;letter-spacing:-.3px}
+  .section .head a{font-size:12.5px;color:var(--accent);cursor:pointer;font-weight:600}
+  .rail{display:flex;gap:13px;overflow-x:auto;padding:0 18px 4px;scrollbar-width:none}
+  .rail::-webkit-scrollbar{display:none}
+
+  .card{flex:0 0 auto;width:124px;cursor:pointer}
+  .card .cover{width:124px;height:176px;border-radius:14px;overflow:hidden;position:relative;border:1px solid var(--border)}
+  .card .cover .fmt{position:absolute;top:7px;left:7px;font-size:9px;font-weight:800;letter-spacing:.4px;padding:3px 7px;border-radius:6px;backdrop-filter:blur(6px);text-transform:uppercase}
+  .fmt.manga{background:rgba(61,220,151,.2);color:#8ff0c4;border:1px solid rgba(61,220,151,.4)}
+  .fmt.manhwa{background:rgba(255,77,141,.2);color:#ff9dbe;border:1px solid rgba(255,77,141,.4)}
+  .card .cover .prog{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(0,0,0,.5)}
+  .card .cover .prog i{display:block;height:100%;background:var(--grad)}
+  .card .t{font-size:12.5px;font-weight:700;margin-top:8px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .card .a{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card .rate{font-size:11px;color:var(--gold);margin-top:3px;font-weight:600}
+
+  .cover .ph{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:11px}
+  .cover .ph .big{font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:19px;line-height:1.05;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+
+  /* grid for browse/library */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;padding:4px 18px}
+  .grid .card{width:auto}
+  .grid .card .cover{width:100%;height:auto;aspect-ratio:124/176}
+  .grid .card .ph .big{font-size:15px}
+
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:2px 18px 14px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex:0 0 auto;font-size:12.5px;font-weight:600;padding:8px 14px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:.15s}
+  .chip.on{background:var(--text);color:#0a0a10;border-color:var(--text)}
+
+  /* bottom nav */
+  .nav{position:absolute;left:0;right:0;bottom:0;height:84px;z-index:50;background:linear-gradient(180deg,rgba(8,8,12,.4),rgba(8,8,12,.97) 45%);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;padding:10px 6px 22px}
+  .nav button{flex:1;background:none;border:none;color:var(--faint);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:600;transition:.15s}
+  .nav button.on{color:var(--text)}
+  .nav button.on svg{stroke:var(--accent)}
+  .nav button svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.9}
+
+  /* TITLE DETAIL */
+  .detail .banner{height:260px;position:relative}
+  .detail .banner .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,8,12,.25),rgba(8,8,12,.7) 70%,var(--bg))}
+  .detail .back{position:absolute;top:8px;left:14px;z-index:10}
+  .detail .body{padding:0 18px;margin-top:-72px;position:relative;z-index:5}
+  .detail .head-row{display:flex;gap:14px}
+  .detail .poster{width:104px;height:150px;border-radius:14px;overflow:hidden;flex:0 0 auto;border:1px solid var(--border-2);box-shadow:0 12px 30px rgba(0,0,0,.5)}
+  .detail .ti{padding-top:78px}
+  .detail .ti h2{font-size:21px;font-weight:800;letter-spacing:-.5px;line-height:1.1}
+  .detail .ti .by{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .detail .ti .stat{display:flex;gap:14px;margin-top:9px;font-size:12px;color:var(--muted)}
+  .detail .ti .stat b{color:var(--text)}
+  .detail .gens{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+  .detail .gens span{font-size:11.5px;color:var(--muted);background:var(--surface-2);border:1px solid var(--border);padding:5px 10px;border-radius:999px}
+  .detail .syn{font-size:13.5px;line-height:1.6;color:#c7c7d4;margin-top:15px}
+  .detail .ctarow{display:flex;gap:10px;margin-top:18px}
+  .detail .perks{margin-top:18px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:15px}
+  .detail .perks .ph{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;margin-bottom:11px}
+  .detail .perks .ph .g{background:var(--grad-gold);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .detail .perks ul{list-style:none;display:grid;gap:9px}
+  .detail .perks li{display:flex;align-items:center;gap:10px;font-size:12.5px;color:#d4d4de}
+  .detail .perks li .ic{width:20px;height:20px;border-radius:6px;background:rgba(255,207,107,.15);display:grid;place-items:center;color:var(--gold);flex:0 0 auto}
+  .detail .perks li.locked{color:var(--muted)}
+
+  .chapters{margin-top:22px}
+  .chapters .ch-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .chapters .ch-head h4{font-size:16px;font-weight:800}
+  .chapters .ch-head .ct{font-size:12px;color:var(--muted)}
+  .chrow{display:flex;align-items:center;gap:12px;padding:12px 13px;border-radius:13px;background:var(--surface);border:1px solid var(--border);margin-bottom:9px;cursor:pointer;transition:.15s}
+  .chrow:active{transform:scale(.99);background:var(--surface-2)}
+  .chrow .num{width:38px;height:38px;border-radius:10px;background:var(--surface-3);display:grid;place-items:center;font-weight:800;font-size:14px;flex:0 0 auto}
+  .chrow.read .num{background:var(--grad);color:#fff}
+  .chrow .ci{flex:1;min-width:0}
+  .chrow .ci .cn{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chrow .ci .cd{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .chrow .free{font-size:10px;font-weight:800;letter-spacing:.4px;color:var(--green);text-transform:uppercase}
+  .chrow .hd{font-size:10px;font-weight:800;color:var(--gold);border:1px solid rgba(255,207,107,.4);padding:2px 6px;border-radius:5px}
+
+  /* PREMIUM screen */
+  .prem{padding:0 18px}
+  .prem .crown{width:60px;height:60px;border-radius:18px;background:var(--grad-gold);display:grid;place-items:center;font-size:30px;margin:6px auto 14px;box-shadow:0 12px 30px rgba(255,157,92,.3)}
+  .prem h2{text-align:center;font-size:24px;font-weight:800;letter-spacing:-.5px}
+  .prem .lede{text-align:center;color:var(--muted);font-size:13.5px;margin-top:8px;line-height:1.55;padding:0 6px}
+  .tier{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px;margin-top:16px;position:relative}
+  .tier.best{border-color:rgba(255,207,107,.5);background:linear-gradient(180deg,rgba(255,207,107,.07),var(--surface))}
+  .tier .pop{position:absolute;top:-11px;right:16px;background:var(--grad-gold);color:#3a2400;font-size:10px;font-weight:800;letter-spacing:.4px;padding:4px 10px;border-radius:999px;text-transform:uppercase}
+  .tier .tn{font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px}
+  .tier .pr{margin-top:8px;font-size:30px;font-weight:800;letter-spacing:-1px}
+  .tier .pr span{font-size:13px;color:var(--muted);font-weight:600}
+  .tier ul{list-style:none;margin-top:14px;display:grid;gap:10px}
+  .tier li{display:flex;gap:10px;font-size:12.5px;color:#d4d4de;align-items:center}
+  .tier li svg{width:17px;height:17px;color:var(--green);flex:0 0 auto}
+  .tier li.off{color:var(--faint)}
+  .tier li.off svg{color:var(--faint)}
+  .tier .btn{margin-top:16px}
+  .creatornote{margin:18px 0 8px;text-align:center;font-size:11.5px;color:var(--faint);line-height:1.5}
+  .creatornote b{color:var(--accent)}
+
+  /* PROFILE */
+  .profile{padding:0 18px}
+  .profile .pcard{display:flex;align-items:center;gap:14px;margin-top:8px}
+  .profile .pav{width:66px;height:66px;border-radius:50%;background:var(--grad);display:grid;place-items:center;font-size:26px;font-weight:800;flex:0 0 auto}
+  .profile .pn{font-size:19px;font-weight:800}
+  .profile .pp{font-size:12.5px;color:var(--muted);margin-top:3px;display:inline-flex;align-items:center;gap:6px}
+  .profile .pp.free{color:var(--muted)}
+  .profile .pp.pro{color:var(--gold)}
+  .profile .stats{display:flex;gap:10px;margin-top:16px}
+  .profile .stat{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px;text-align:center}
+  .profile .stat b{font-size:20px;font-weight:800;display:block}
+  .profile .stat span{font-size:11px;color:var(--muted)}
+  .menu{margin-top:18px;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+  .menu .mi{display:flex;align-items:center;gap:13px;padding:14px 15px;border-bottom:1px solid var(--border);font-size:13.5px;cursor:pointer}
+  .menu .mi:last-child{border-bottom:none}
+  .menu .mi svg{width:19px;height:19px;color:var(--muted);stroke-width:1.9;fill:none;stroke:currentColor}
+  .menu .mi .ch{margin-left:auto;color:var(--faint)}
+  .menu .mi .tog{margin-left:auto;width:42px;height:25px;border-radius:999px;background:var(--surface-3);position:relative;transition:.2s}
+  .menu .mi .tog.on{background:var(--green)}
+  .menu .mi .tog i{position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:#fff;transition:.2s}
+  .menu .mi .tog.on i{left:19px}
+
+  /* READER */
+  .reader{position:absolute;inset:0;z-index:100;background:#000;display:none;flex-direction:column}
+  .reader.open{display:flex}
+  .reader .rtop{position:absolute;top:0;left:0;right:0;z-index:20;padding:46px 14px 12px;background:linear-gradient(180deg,rgba(0,0,0,.85),transparent);display:flex;align-items:center;gap:12px;transition:.25s;transform:translateY(0)}
+  .reader .rbot{position:absolute;bottom:0;left:0;right:0;z-index:20;padding:14px 16px 26px;background:linear-gradient(0deg,rgba(0,0,0,.9),transparent);transition:.25s}
+  .reader.immersive .rtop{transform:translateY(-100%)}
+  .reader.immersive .rbot{transform:translateY(100%)}
+  .reader .rtop .ri{flex:1;min-width:0}
+  .reader .rtop .ri .rt{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .reader .rtop .ri .rc{font-size:11px;color:var(--muted)}
+  .reader .stagearea{flex:1;position:relative;overflow:hidden}
+
+  /* paginated */
+  .pageview{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#000}
+  .pageview.on{display:flex}
+  .pageview .pg{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+  .pageview .tapL,.pageview .tapR,.pageview .tapC{position:absolute;top:0;bottom:0;z-index:10;cursor:pointer}
+  .pageview .tapL{left:0;width:33%}.pageview .tapR{right:0;width:33%}.pageview .tapC{left:33%;width:34%}
+  .rbot .scrub{display:flex;align-items:center;gap:11px;direction:rtl}
+  .rbot .scrub input{flex:1;accent-color:var(--accent)}
+  .rbot .scrub .pn{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;direction:ltr;min-width:44px;text-align:center}
+  .rbot .rtools{display:flex;justify-content:space-around;margin-top:12px}
+  .rbot .rtools button{background:none;border:none;color:var(--muted);font-size:10.5px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
+  .rbot .rtools button svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8}
+
+  /* webtoon */
+  .webtoon{position:absolute;inset:0;display:none;overflow-y:auto;background:#0c0c0e;scrollbar-width:none}
+  .webtoon::-webkit-scrollbar{display:none}
+  .webtoon.on{display:block}
+  .webtoon .strip{width:100%}
+  .webtoon .strip img,.webtoon .strip .slice{display:block;width:100%}
+
+  .rtag{font-size:9.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:3px 8px;border-radius:6px}
+  .rtag.std{background:rgba(255,255,255,.12);color:#cfcfda}
+  .rtag.hd{background:var(--grad-gold);color:#3a2400}
+
+  /* ad slot (free tier) */
+  .adslot{margin:0 auto;max-width:340px;background:repeating-linear-gradient(45deg,#16161f,#16161f 12px,#191922 12px,#191922 24px);border:1px dashed var(--border-2);border-radius:12px;padding:20px;text-align:center;color:var(--faint);font-size:11px}
+  .adslot b{display:block;color:var(--muted);font-size:12px;margin-bottom:3px}
+
+  /* modal / sheet */
+  .scrim-bg{position:absolute;inset:0;z-index:200;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center}
+  .scrim-bg.open{display:flex;animation:fade .2s}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .sheet{width:100%;background:var(--surface);border-radius:26px 26px 36px 36px;border:1px solid var(--border);border-bottom:none;padding:22px 20px 30px;animation:up .3s cubic-bezier(.2,.8,.2,1)}
+  @keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .sheet .grab{width:40px;height:5px;border-radius:999px;background:var(--surface-3);margin:0 auto 18px}
+  .sheet .wallart{width:64px;height:64px;border-radius:18px;background:var(--grad-gold);display:grid;place-items:center;font-size:30px;margin:0 auto 14px;box-shadow:0 10px 30px rgba(255,157,92,.3)}
+  .sheet h3{text-align:center;font-size:20px;font-weight:800;letter-spacing:-.4px}
+  .sheet .ws{text-align:center;color:var(--muted);font-size:13px;margin-top:8px;line-height:1.55}
+  .sheet .wl{margin:16px 0;display:grid;gap:11px}
+  .sheet .wl div{display:flex;gap:11px;align-items:center;font-size:13px;color:#d4d4de}
+  .sheet .wl div .ic{width:26px;height:26px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;color:var(--gold);flex:0 0 auto}
+  .sheet .alt{text-align:center;margin-top:12px;font-size:12.5px;color:var(--muted);cursor:pointer}
+
+  .toast{position:absolute;left:50%;bottom:108px;transform:translateX(-50%) translateY(20px);z-index:300;background:rgba(20,20,28,.96);border:1px solid var(--border-2);color:var(--text);font-size:12.5px;font-weight:600;padding:12px 18px;border-radius:13px;opacity:0;transition:.3s;pointer-events:none;display:flex;align-items:center;gap:9px;box-shadow:var(--shadow)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast .dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+
+  /* reading-mode switcher + X-Ray button */
+  .modebar{display:flex;gap:10px;align-items:center;margin-bottom:11px}
+  .seg{display:flex;gap:3px;background:var(--surface-2);border:1px solid var(--border);border-radius:11px;padding:3px;flex:1}
+  .seg button{flex:1;background:none;border:none;color:var(--muted);font-size:11.5px;font-weight:700;padding:7px 4px;border-radius:8px;cursor:pointer;transition:.15s}
+  .seg button.on{background:var(--surface-3);color:var(--text)}
+  .xbtn{flex:0 0 auto;display:flex;align-items:center;gap:6px;background:rgba(124,92,255,.16);border:1px solid rgba(124,92,255,.45);color:#cbbcff;font-size:11.5px;font-weight:800;padding:8px 13px;border-radius:11px;cursor:pointer;transition:.15s}
+  .xbtn.on{background:var(--grad);color:#fff;border-color:transparent;box-shadow:0 4px 16px rgba(124,92,255,.4)}
+
+  /* book page-turn */
+  .pageview.book{perspective:2200px}
+  .leaflayer{position:absolute;inset:0;z-index:8;pointer-events:none}
+  .leaflayer .leaf{position:absolute;inset:0;transform-style:preserve-3d;backface-visibility:hidden;transition:transform .56s cubic-bezier(.34,.62,.3,1);box-shadow:0 0 50px rgba(0,0,0,.55);background:#000}
+  .leaflayer .leaf::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0),rgba(0,0,0,.35));opacity:0;transition:opacity .56s}
+  .leaflayer .leaf.go::after{opacity:1}
+  @keyframes pagein{from{opacity:.25;transform:translateX(6%) scale(.985)}to{opacity:1;transform:none}}
+
+  /* X-Ray */
+  .xraylayer{position:absolute;inset:0;z-index:14;display:none}
+  .xraylayer.on{display:block}
+  .hotspot{position:absolute;width:30px;height:30px;border-radius:50%;border:none;transform:translate(-50%,-50%);background:rgba(124,92,255,.30);cursor:pointer;pointer-events:auto;animation:pulse 1.7s infinite}
+  .hotspot::after{content:'';position:absolute;inset:10px;border-radius:50%;background:#fff;box-shadow:0 0 8px rgba(124,92,255,.9)}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(124,92,255,.55),0 0 0 2px rgba(255,255,255,.9)}70%{box-shadow:0 0 0 15px rgba(124,92,255,0),0 0 0 2px rgba(255,255,255,.9)}100%{box-shadow:0 0 0 0 rgba(124,92,255,0),0 0 0 2px rgba(255,255,255,.9)}}
+  .xraybar{position:absolute;left:10px;right:10px;top:calc(78px + env(safe-area-inset-top));z-index:18;background:rgba(16,16,24,.93);backdrop-filter:blur(12px);border:1px solid var(--border-2);border-radius:15px;padding:11px 13px;display:none;animation:fade .2s}
+  .xraybar.on{display:block}
+  .xraybar .xh{font-size:10px;font-weight:800;letter-spacing:.5px;color:#cbbcff;text-transform:uppercase;margin-bottom:8px}
+  .xraybar .row{display:flex;gap:7px;flex-wrap:wrap}
+  .castchip{display:flex;align-items:center;gap:7px;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;padding:4px 12px 4px 4px;cursor:pointer;font-size:12px;font-weight:600;color:var(--text)}
+  .castchip .ci{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff}
+  .xraybar .links{margin-top:9px;display:flex;gap:8px}
+  .xraybar .links button{flex:1;background:var(--surface-2);border:1px solid var(--border);color:var(--text);font-size:11.5px;font-weight:700;padding:8px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+  /* X-Ray sheet content */
+  .xchar{display:flex;align-items:center;gap:13px;margin-bottom:4px}
+  .xav{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;font-size:22px;font-weight:800;color:#fff;flex:0 0 auto}
+  .xname{font-size:19px;font-weight:800;letter-spacing:-.4px}
+  .xrole{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .xpremium{margin-left:auto;font-size:10px;font-weight:800;color:#cbbcff;background:rgba(124,92,255,.18);border:1px solid rgba(124,92,255,.4);padding:4px 9px;border-radius:999px}
+  .xtags{display:flex;gap:7px;margin:13px 0 0}
+  .xtags span{font-size:11px;font-weight:700;color:var(--muted);background:var(--surface-2);border:1px solid var(--border);padding:4px 10px;border-radius:999px}
+  .xbio{font-size:13.5px;line-height:1.6;color:#d4d4de;margin-top:13px}
+  .xmeta{display:flex;gap:10px;margin-top:14px}
+  .xmeta>div{flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:11px}
+  .xmeta b{display:block;font-size:10px;letter-spacing:.4px;text-transform:uppercase;color:var(--faint);margin-bottom:4px;font-weight:800}
+  .xmeta>div{font-size:12.5px;color:var(--text)}
+  .xlist{display:grid;gap:10px;margin-top:6px}
+  .xlist .gi{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:12px 13px}
+  .xlist .gi b{font-size:13px;font-weight:800;display:block;margin-bottom:3px}
+  .xlist .gi span{font-size:12.5px;color:var(--muted);line-height:1.5}
+
+  .hidden{display:none!important}
+  @media(max-width:900px){.pitch{display:none}.stage{gap:0}}
+  /* installed PWA / phone: fill screen, respect notch, drop the fake chrome */
+  @media all and (display-mode:standalone){ .statusbar{display:none} .view{padding-top:env(safe-area-inset-top)} }
+  @media(max-width:440px){
+    body{padding:0}
+    .phone{width:100vw;height:100vh;height:100dvh;max-height:none;border-radius:0;padding:0;box-shadow:none}
+    .screen{border-radius:0}
+    .notch{display:none}.statusbar{display:none}
+    .view{padding-top:env(safe-area-inset-top)}
+    .topbar{padding-top:calc(6px + env(safe-area-inset-top))}
+    .nav{padding-bottom:calc(22px + env(safe-area-inset-bottom));height:auto}
+    .rtop{padding-top:calc(46px + env(safe-area-inset-top))}
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="pitch">
+    <div class="logo"><span class="mark">◳</span> MangaHub</div>
+    <h1>A reader so good that <span class="hl">paying beats pirating.</span></h1>
+    <p>Creator-direct manga &amp; manhwa. Every story is free to read — premium sells the <b style="color:#fff">experience</b>: HD, EPUB, offline, no ads. Self-distributed, no app-store tax.</p>
+    <div class="tags">
+      <span>📖 Dual reader (RTL + webtoon)</span>
+      <span>🎚️ Quality wall</span>
+      <span>💸 Creator tips</span>
+      <span>📱 Installable PWA</span>
+    </div>
+    <div class="hint">Interactive mock · tap around → <b>Read</b>, then hit <b>Read in HD</b></div>
+  </div>
+
+  <div class="phone">
+    <div class="screen">
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+        <pattern id="ht" width="3" height="3" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r=".7" fill="#000" opacity=".15"/></pattern>
+        <pattern id="htd" width="2.4" height="2.4" patternUnits="userSpaceOnUse"><circle cx="1.2" cy="1.2" r=".75" fill="#000" opacity=".34"/></pattern>
+      </defs></svg>
+      <div class="notch"></div>
+      <div class="statusbar">
+        <span>17:01</span>
+        <span class="right">
+          <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 1.5c2 0 3.8.8 5.1 2L12.4 5C11.4 4 10 3.4 8.5 3.4S5.6 4 4.6 5L3.4 3.5c1.3-1.2 3.1-2 5.1-2z"/><circle cx="8.5" cy="8.5" r="1.6"/></svg>
+          <svg width="20" height="12" viewBox="0 0 20 12" fill="none"><rect x="1" y="2" width="16" height="8" rx="2.2" stroke="currentColor"/><rect x="2.5" y="3.5" width="11" height="5" rx="1" fill="currentColor"/><rect x="18" y="4.5" width="1.6" height="3" rx="1" fill="currentColor"/></svg>
+        </span>
+      </div>
+
+      <!-- VIEW: HOME -->
+      <div class="view" id="view-home">
+        <div class="topbar">
+          <h2>Discover</h2>
+          <div class="acts">
+            <div class="iconbtn" onclick="go('browse')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg></div>
+            <div class="avatar" onclick="go('profile')">A</div>
+          </div>
+        </div>
+        <div id="home-content"></div>
+      </div>
+
+      <!-- VIEW: BROWSE -->
+      <div class="view hidden" id="view-browse">
+        <div class="topbar"><h2>Browse</h2>
+          <div class="acts"><div class="iconbtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M6 12h12M10 18h4"/></svg></div></div>
+        </div>
+        <div class="chips" id="browse-chips"></div>
+        <div class="grid" id="browse-grid"></div>
+      </div>
+
+      <!-- VIEW: LIBRARY -->
+      <div class="view hidden" id="view-library">
+        <div class="topbar"><h2>Library</h2>
+          <div class="acts"><div class="iconbtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M6 12h12M10 18h4"/></svg></div></div>
+        </div>
+        <div class="chips"><div class="chip on">Reading</div><div class="chip">Owned</div><div class="chip">Downloaded</div><div class="chip">Finished</div></div>
+        <div class="section" style="margin-top:6px"><div class="head"><h4>Continue reading</h4></div><div class="rail" id="lib-continue"></div></div>
+        <div class="section"><div class="head"><h4>Your shelf</h4></div><div class="grid" id="lib-grid"></div></div>
+      </div>
+
+      <!-- VIEW: PREMIUM -->
+      <div class="view hidden" id="view-premium">
+        <div class="topbar"><h2>Premium</h2></div>
+        <div class="prem">
+          <div class="crown">👑</div>
+          <h2>Own the experience.</h2>
+          <p class="lede">Every story stays free. Premium is about <b style="color:#fff">how</b> you read it — and it funds the artists directly.</p>
+
+          <div class="tier best">
+            <div class="pop">Most popular</div>
+            <div class="tn">✨ Premium</div>
+            <div class="pr">$5.99<span> / month</span></div>
+            <ul>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> HD / 4K page quality</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> EPUB &amp; CBZ downloads</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> Read offline, anywhere</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> Zero ads</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> Supports every creator you read</li>
+            </ul>
+            <button class="btn gold block" onclick="goPremium()">Go Premium — first 7 days free</button>
+          </div>
+
+          <div class="tier">
+            <div class="tn">🆓 Free</div>
+            <div class="pr">$0<span> forever</span></div>
+            <ul>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> Every story, every chapter</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 5 5L20 7"/></svg> Standard resolution</li>
+              <li class="off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 6l12 12M18 6 6 18"/></svg> Supported by light ads</li>
+              <li class="off"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 6l12 12M18 6 6 18"/></svg> No HD / EPUB / offline</li>
+            </ul>
+          </div>
+          <div class="creatornote">You can also <b>buy a title to own</b> forever, or <b>tip a creator</b> directly.<br>Creators keep their IP — no rights grab, no NDA.</div>
+        </div>
+      </div>
+
+      <!-- VIEW: PROFILE -->
+      <div class="view hidden" id="view-profile">
+        <div class="topbar"><h2>Profile</h2></div>
+        <div class="profile">
+          <div class="pcard">
+            <div class="pav">A</div>
+            <div>
+              <div class="pn">Akira</div>
+              <div class="pp free" id="prof-plan">● Free plan</div>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat"><b>12</b><span>In library</span></div>
+            <div class="stat"><b>148</b><span>Chapters read</span></div>
+            <div class="stat"><b>3</b><span>Creators tipped</span></div>
+          </div>
+          <div class="menu">
+            <div class="mi" onclick="go('premium')"><svg viewBox="0 0 24 24"><path d="m12 2 3 6 6 .9-4.5 4.3 1 6L12 17l-5.5 2.2 1-6L3 8.9 9 8z"/></svg> Upgrade to Premium <span class="ch">›</span></div>
+            <div class="mi"><svg viewBox="0 0 24 24"><path d="M12 8v8m-4-4h8"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg> Install app (Add to Home Screen) <span class="ch">›</span></div>
+            <div class="mi"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Comments &amp; community <span class="ch" style="font-size:9px;color:var(--accent)">SOON</span></div>
+            <div class="mi"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H5.2L4 17.2z"/></svg> Become a creator <span class="ch" style="font-size:9px;color:var(--accent)">SOON</span></div>
+            <div class="mi"><span style="color:var(--muted)">Show ads (free tier)</span><div class="tog on" id="adtog" onclick="event.stopPropagation();toggleAds(this)"><i></i></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW: DETAIL -->
+      <div class="view hidden detail" id="view-detail"></div>
+
+      <!-- READER -->
+      <div class="reader" id="reader">
+        <div class="rtop">
+          <div class="iconbtn" onclick="closeReader()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg></div>
+          <div class="ri"><div class="rt" id="r-title">—</div><div class="rc" id="r-chap">—</div></div>
+          <span class="rtag std" id="r-tier">STD</span>
+        </div>
+
+        <div class="xraybar" id="xraybar">
+          <div class="xh">✦ X-Ray · on this page</div>
+          <div class="row" id="xray-cast"></div>
+          <div class="links">
+            <button onclick="openXraySheet('recap')">↺ Recap so far</button>
+            <button onclick="openXraySheet('glossary')">❖ Glossary</button>
+          </div>
+        </div>
+
+        <div class="stagearea">
+          <div class="pageview" id="pageview">
+            <div class="tapL" onclick="flip(1)"></div>
+            <div class="tapC" onclick="toggleImmersive()"></div>
+            <div class="tapR" onclick="flip(-1)"></div>
+            <div class="pg" id="pg"></div>
+            <div class="leaflayer" id="leaflayer"></div>
+            <div class="xraylayer" id="xraylayer"></div>
+          </div>
+          <div class="webtoon" id="webtoon" onclick="toggleImmersive()">
+            <div class="strip" id="strip"></div>
+          </div>
+        </div>
+
+        <div class="rbot">
+          <div class="modebar">
+            <div class="seg" id="modeseg">
+              <button data-m="scroll" onclick="setMode('scroll')">≣ Scroll</button>
+              <button data-m="page" onclick="setMode('page')">▣ Page</button>
+              <button data-m="book" onclick="setMode('book')">❏ Book</button>
+            </div>
+            <button class="xbtn" id="xbtn" onclick="toggleXray()">✦ X-Ray</button>
+          </div>
+          <div class="scrub" id="scrubwrap">
+            <span class="pn" id="r-pn">1 / 18</span>
+            <input type="range" id="r-range" min="1" max="18" value="1" oninput="seek(this.value)">
+          </div>
+          <div class="rtools">
+            <button onclick="qualityWall('hd')"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg>Read in HD</button>
+            <button onclick="qualityWall('epub')"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Download</button>
+            <button onclick="toast('Saved to Library','dot')"><svg viewBox="0 0 24 24"><path d="M5 3h14v18l-7-5-7 5z"/></svg>Library</button>
+            <button onclick="tip()"><svg viewBox="0 0 24 24"><path d="M20 8.5c0 4-8 11-8 11s-8-7-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 8.5z"/></svg>Tip</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM NAV -->
+      <div class="nav" id="nav">
+        <button class="on" data-v="home" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Home</button>
+        <button data-v="browse" onclick="go('browse')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>Browse</button>
+        <button data-v="library" onclick="go('library')"><svg viewBox="0 0 24 24"><path d="M4 4h12a2 2 0 0 1 2 2v15l-8-4-8 4V6a2 2 0 0 1 2-2z"/></svg>Library</button>
+        <button data-v="premium" onclick="go('premium')"><svg viewBox="0 0 24 24"><path d="m12 2 3 6 6 .9-4.5 4.3 1 6L12 17l-5.5 2.2 1-6L3 8.9 9 8z"/></svg>Premium</button>
+        <button data-v="profile" onclick="go('profile')"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>You</button>
+      </div>
+
+      <!-- quality wall sheet -->
+      <div class="scrim-bg" id="wall" onclick="if(event.target===this)closeWall()">
+        <div class="sheet">
+          <div class="grab"></div>
+          <div class="wallart" id="wall-art">🔓</div>
+          <h3 id="wall-title">Read this in HD</h3>
+          <p class="ws" id="wall-sub">You're reading the full story free at standard quality. Premium unlocks the good stuff.</p>
+          <div class="wl">
+            <div><span class="ic">◉</span> Crisp HD / 4K pages — every line and screentone</div>
+            <div><span class="ic">⤓</span> Download as EPUB &amp; CBZ — yours to keep</div>
+            <div><span class="ic">✈</span> Read offline on any device</div>
+            <div><span class="ic">⊘</span> No ads, ever</div>
+          </div>
+          <button class="btn gold block" onclick="goPremium()">Start free trial → Premium</button>
+          <div class="alt" onclick="closeWall()">Keep reading free in standard</div>
+        </div>
+      </div>
+
+      <!-- X-Ray sheet -->
+      <div class="scrim-bg" id="xray" onclick="if(event.target===this)closeXray()">
+        <div class="sheet" id="xray-sheet"></div>
+      </div>
+
+      <div class="toast" id="toast"><span class="dot"></span><span id="toast-msg">Done</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- data ---------- */
+const G = [
+  ['#7c5cff','#ff4d8d'],['#0ea5e9','#6366f1'],['#f43f5e','#f59e0b'],['#10b981','#0ea5e9'],
+  ['#8b5cf6','#ec4899'],['#ef4444','#7c3aed'],['#14b8a6','#6366f1'],['#f59e0b','#ef4444'],
+  ['#3b82f6','#06b6d4'],['#a855f7','#6366f1']
+];
+const TITLES = [
+  {id:0,t:'Lunar Vanguard',a:'R. Boichi',fmt:'manhwa',g:G[0],rate:'4.9',tags:['Action','Fantasy','Magic'],motif:'🌙',ch:42,read:7,prog:.42,
+   syn:'When the last moon fractures, a forgotten order of blade-dancers awakens. Kaede must master the Vanguard arts before the dark tide swallows the final city.'},
+  {id:1,t:'Neon Strikers',a:'A. Tanaka',fmt:'manga',g:G[1],rate:'4.7',tags:['Sci-Fi','Action'],motif:'⚡',ch:30,read:30,prog:1,
+   syn:'In Neo-Osaka, street racers settle scores at 400km/h. But the new circuit hides a conspiracy that could rewrite the city itself.'},
+  {id:2,t:'Crimson Petals',a:'M. Yoon',fmt:'manhwa',g:G[2],rate:'4.8',tags:['Romance','Drama'],motif:'🌸',ch:64,read:18,prog:.28,
+   syn:'A florist who can see the color of feelings falls for the one person whose emotions she cannot read.'},
+  {id:3,t:'Tide & Ember',a:'K. Sato',fmt:'manga',g:G[3],rate:'4.6',tags:['Adventure','Fantasy'],motif:'🔥',ch:21,read:0,prog:0,
+   syn:'Two siblings born of opposite elements set sail to find the island where the sea burns.'},
+  {id:4,t:'Velvet Requiem',a:'S. Park',fmt:'manhwa',g:G[4],rate:'4.9',tags:['Thriller','Mystery'],motif:'🎭',ch:55,read:3,prog:.05,
+   syn:'A concert pianist wakes with no memory and a melody only murderers seem to recognize.'},
+  {id:5,t:'Iron Lotus',a:'H. Watanabe',fmt:'manga',g:G[5],rate:'4.5',tags:['Martial','Action'],motif:'🪷',ch:88,read:0,prog:0,
+   syn:'A blacksmith\'s daughter forges the one weapon capable of ending the warlords\' century.'},
+  {id:6,t:'Starlit Bento',a:'Y. Mori',fmt:'manhwa',g:G[6],rate:'4.8',tags:['Slice of life','Cozy'],motif:'🍱',ch:36,read:12,prog:.33,
+   syn:'A night-shift convenience store, a lonely astronomer, and the small meals that bring a neighborhood together.'},
+  {id:7,t:'Ashen Crown',a:'D. Kim',fmt:'manhwa',g:G[7],rate:'4.7',tags:['Fantasy','Politics'],motif:'👑',ch:49,read:0,prog:0,
+   syn:'The disgraced heir returns from exile with a dead king\'s secret and a debt the empire cannot pay.'},
+  {id:8,t:'Deep Current',a:'N. Aoki',fmt:'manga',g:G[8],rate:'4.4',tags:['Sci-Fi','Drama'],motif:'🌊',ch:17,read:0,prog:0,
+   syn:'Beneath a drowned Tokyo, a salvage diver finds a signal that should not exist.'},
+  {id:9,t:'Hex & Honey',a:'L. Choi',fmt:'manhwa',g:G[9],rate:'4.9',tags:['Comedy','Romance','Magic'],motif:'🍯',ch:71,read:25,prog:.35,
+   syn:'A retired witch opens a bakery. Her ex-rival opens one across the street. The town has never eaten better.'},
+];
+
+/* ---------- placeholder art ---------- */
+function coverArt(o, big){
+  return `<div class="art ph" style="background:linear-gradient(150deg,${o.g[0]},${o.g[1]})">
+      <div style="position:absolute;inset:0;background:
+        radial-gradient(60px 60px at 78% 22%,rgba(255,255,255,.35),transparent 70%),
+        radial-gradient(140px 120px at 20% 90%,rgba(0,0,0,.35),transparent 70%)"></div>
+      <div style="position:absolute;top:14px;right:12px;font-size:34px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4))">${o.motif}</div>
+      <div class="big">${o.t}</div>
+    </div>`;
+}
+/* a short, coherent scene so flipping pages feels like reading */
+const SCENE=[
+  {n:'The last bell had long stopped ringing over Vael.'},
+  {d:"You shouldn't have come back."},
+  {d:"Neither should you.",r:1},
+  {s:'FWOOSH'},
+  {d:"Then let's finish it."},
+  {n:'Steel woke beneath a fractured moon.'},
+  {d:"Is that all the Vanguard taught you?"},
+  {s:'KRAAN'},
+  {d:"No. This is.",r:1},
+  {n:'For one breath, the city went silent.'},
+  {d:"...how?"},
+  {d:"You always look up.",r:1},
+  {d:"I came from below.",r:1},
+  {s:'DOOM'},
+  {n:'When the dust fell, one shadow stood.'},
+  {d:"It isn't over."},
+  {d:"It never is.",r:1},
+  {n:'— to be continued.'},
+];
+/* X-Ray data (in production: creator-authored, AI-assisted, spoiler-gated to your progress) */
+const CAST=[
+  {id:'kaede',name:'Kaede',role:'The Vanguard heir',init:'K',hue:'#7c5cff',
+   bio:"The last student of the Vanguard blade-order. Returned to Vael to settle a debt she swore she never would.",
+   first:'Ch. 1 · p.3', rel:'Former ally — now rival — of Sora', tags:['Protagonist','Blade-dancer']},
+  {id:'sora',name:'Sora',role:'Exile of the lower rings',init:'S',hue:'#ff4d8d',
+   bio:"Once Kaede's closest comrade. Vanished after the Fracture and now fights from the city below.",
+   first:'Ch. 2 · p.7', rel:'Former ally of Kaede', tags:['Rival','Shadow-blade']},
+];
+const GLOSSARY=[
+  {t:'The Vanguard', d:'An order of blade-dancers sworn to guard the fractured moon.'},
+  {t:'Vael', d:'The last standing city, built in rings around the old citadel.'},
+  {t:'The Fracture', d:'The night the moon broke and the dark tide first rose.'},
+];
+const RECAP="Kaede returns to Vael after years in exile, only to find Sora waiting at the citadel gate. The bells fall silent as old vows resurface — and blades are drawn beneath a broken moon.";
+const HOTSPOTS=[ {x:39,y:31,id:'kaede'}, {x:64,y:62,id:'sora'} ];
+const INK='#16140f', PAPER='#f4f0e7';
+/* white speech bubble (works on paper or color) */
+function say(x,y,txt,fromRight){
+  const fs = txt.length>26 ? 4.1 : (txt.length>18 ? 4.7 : 5.4);
+  const w = Math.min(88, txt.length*fs*0.56+12), h=Math.max(12, fs+7);
+  if(x+w/2>98) x=98-w/2; if(x-w/2<2) x=2+w/2;
+  const tail=fromRight
+    ? `<path d="M${x+w*0.18} ${y+h/2-1} l5 7 l-12 -4 z" fill="#fff" stroke="${INK}" stroke-width="1"/>`
+    : `<path d="M${x-w*0.18} ${y+h/2-1} l-5 7 l12 -4 z" fill="#fff" stroke="${INK}" stroke-width="1"/>`;
+  return `${tail}<rect x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" rx="${h/2}" fill="#fff" stroke="${INK}" stroke-width="1.1"/>`
+    + `<text x="${x}" y="${y+fs*0.36}" font-size="${fs}" text-anchor="middle" font-family="Georgia" fill="#111">${txt}</text>`;
+}
+function narr(txt){
+  const t=txt.length>34?txt.slice(0,33)+'…':txt;
+  return `<rect x="3" y="3" width="${Math.min(82,9+t.length*2.55)}" height="11" fill="#fff" stroke="${INK}" stroke-width=".9"/>`
+    + `<text x="6.5" y="10.6" font-size="4.7" font-family="Georgia" font-style="italic" fill="#111">${t}</text>`;
+}
+/* B&W manga motif in a 100x60 panel */
+function motifArt(k){
+  const bg=`<rect width="100" height="60" fill="${PAPER}"/><rect width="100" height="60" fill="url(#ht)"/>`;
+  if(k===0) return bg+`<g fill="${INK}"><path d="M50 60 C39 40 35 36 50 25 C65 36 61 40 50 60Z"/><circle cx="50" cy="19" r="9"/><path d="M40 17 q10 -15 20 0 q-10 -7 -20 0Z"/></g>`;
+  if(k===1) return bg+`<rect width="100" height="60" fill="url(#htd)" opacity=".4"/><path d="M16 32 Q50 9 84 32 Q50 51 16 32Z" fill="none" stroke="${INK}" stroke-width="2"/><circle cx="50" cy="32" r="11" fill="${INK}"/><circle cx="54" cy="28" r="3.3" fill="${PAPER}"/>`;
+  if(k===2) return bg+`<g stroke="${INK}" stroke-width="1.3">`+Array.from({length:9},(_,i)=>`<line x1="${i*13}" y1="0" x2="${i*13-34}" y2="60"/>`).join('')+`</g><path d="M8 53 L93 7" stroke="${PAPER}" stroke-width="8"/><path d="M8 53 L93 7" stroke="${INK}" stroke-width="1.5"/>`;
+  if(k===3) return bg+`<g fill="${INK}">`+Array.from({length:8},(_,i)=>`<rect x="${i*13}" y="${18+(i*37%26)}" width="11" height="60"/>`).join('')+`</g><circle cx="82" cy="13" r="8" fill="none" stroke="${INK}" stroke-width="1.5"/>`;
+  if(k===4) return bg+`<g stroke="${INK}" stroke-width="1.2">`+Array.from({length:16},(_,i)=>{const a=i*22.5*Math.PI/180;return `<line x1="50" y1="30" x2="${(50+62*Math.cos(a)).toFixed(1)}" y2="${(30+62*Math.sin(a)).toFixed(1)}"/>`;}).join('')+`</g><circle cx="50" cy="30" r="8.5" fill="${PAPER}" stroke="${INK}" stroke-width="1.5"/>`;
+  return bg+`<circle cx="70" cy="20" r="13" fill="none" stroke="${INK}" stroke-width="1.6"/><path d="M62 16 a13 13 0 0 0 16 12" fill="${INK}"/><path d="M6 46 q14 -7 28 0 t28 0 t28 0" fill="none" stroke="${INK}" stroke-width="1.1" opacity=".5"/>`;
+}
+function mangaPanel(seed, idx, beat){
+  let txt='';
+  if(beat){
+    if(beat.s) txt=`<text x="58" y="22" font-size="13" font-weight="900" font-style="italic" fill="${INK}" text-anchor="middle" transform="rotate(-9 58 22)">${beat.s}!</text>`;
+    else if(beat.n!==undefined) txt=narr(beat.n);
+    else txt=say(56,15,beat.d,beat.r);
+  }
+  return `<svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block">${motifArt((seed+idx)%6)}${txt}</svg>`;
+}
+function mangaPage(o, n, total){
+  const beat=SCENE[(n-1)%SCENE.length], id=o.id;
+  const P=(i,b)=>`<div style="border:2.4px solid ${INK};overflow:hidden;background:${PAPER}">${mangaPanel(id,i,b)}</div>`;
+  let grid; const t=n%4;
+  if(t===0) grid=`<div style="display:grid;grid-template-rows:1.15fr 1fr;gap:6px;height:100%">${P(n,beat)}<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${P(n+1)}${P(n+2)}</div></div>`;
+  else if(t===1) grid=`<div style="display:grid;grid-template-columns:1fr 1.15fr;gap:6px;height:100%"><div style="display:grid;grid-template-rows:1fr 1fr;gap:6px">${P(n+2)}${P(n+1)}</div>${P(n,beat)}</div>`;
+  else if(t===2) grid=`<div style="display:grid;grid-template-rows:1fr 1fr 1fr;gap:6px;height:100%">${P(n,beat)}${P(n+1)}${P(n+2)}</div>`;
+  else grid=`<div style="display:grid;grid-template-rows:1.4fr 1fr;gap:6px;height:100%">${P(n,beat)}<div style="display:grid;grid-template-columns:1fr 1.3fr;gap:6px">${P(n+1)}${P(n+2)}</div></div>`;
+  return `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000;padding:8px">
+    <div style="width:100%;max-width:356px;aspect-ratio:2/3;background:#ece5d7;padding:8px;border-radius:2px;box-shadow:0 12px 44px rgba(0,0,0,.6);display:flex;flex-direction:column">
+      <div style="flex:1;min-height:0">${grid}</div>
+      <div style="padding-top:6px;color:#8a8275;font-size:9px;display:flex;justify-content:space-between;font-family:Georgia"><span>${o.t}</span><span>${n} / ${total}</span></div>
+    </div></div>`;
+}
+function webtoonSlice(o, i){
+  const c=o.g, H=46+(i%4)*16, beat=SCENE[i%SCENE.length], gid=`wg${o.id}_${i}`;
+  let txt='';
+  if(i%3===1){
+    if(beat.s) txt=`<text x="60" y="${(H*0.42).toFixed(1)}" font-size="9" font-weight="900" font-style="italic" fill="#fff" text-anchor="middle" transform="rotate(-8 60 ${(H*0.42).toFixed(1)})">${beat.s}!</text>`;
+    else if(beat.n!==undefined) txt=narr(beat.n);
+    else txt=say(58,(H*0.3).toFixed(1),beat.d,beat.r);
+  }
+  return `<svg viewBox="0 0 100 ${H}" preserveAspectRatio="none" style="width:100%;display:block">
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c[0]}"/><stop offset="1" stop-color="${c[1]}"/></linearGradient></defs>
+    <rect width="100" height="${H}" fill="url(#${gid})"/>
+    <rect width="100" height="${H}" fill="rgba(0,0,0,.10)"/>
+    <path d="M50 ${H} C40 ${(H*0.55).toFixed(1)} 38 ${(H*0.5).toFixed(1)} 50 ${(H*0.34).toFixed(1)} C62 ${(H*0.5).toFixed(1)} 60 ${(H*0.55).toFixed(1)} 50 ${H}Z" fill="rgba(0,0,0,.42)"/>
+    <circle cx="50" cy="${(H*0.27).toFixed(1)}" r="${(H*0.09).toFixed(1)}" fill="rgba(0,0,0,.42)"/>
+    ${txt}
+  </svg>`;
+}
+
+/* ---------- state ---------- */
+let premium = false, adsOn = true, immersive=false;
+let cur = {o:null, page:1, total:18, view:'page', xray:false, chap:1};
+
+/* ---------- render: home ---------- */
+function cardHTML(o, showProg){
+  return `<div class="card" onclick="openDetail(${o.id})">
+    <div class="cover">${coverArt(o)}
+      <span class="fmt ${o.fmt}">${o.fmt}</span>
+      ${showProg&&o.prog>0?`<div class="prog"><i style="width:${Math.round(o.prog*100)}%"></i></div>`:''}
+    </div>
+    <div class="t">${o.t}</div><div class="a">${o.a}</div><div class="rate">★ ${o.rate}</div>
+  </div>`;
+}
+function rail(list, showProg){ return `<div class="rail">${list.map(o=>cardHTML(o,showProg)).join('')}</div>`; }
+
+function renderHome(){
+  const hero = TITLES[0];
+  const cont = TITLES.filter(o=>o.prog>0&&o.prog<1);
+  document.getElementById('home-content').innerHTML = `
+    <div class="hero" onclick="openDetail(${hero.id})">
+      <div class="art" style="background:linear-gradient(135deg,${hero.g[0]},${hero.g[1]})">
+        <div style="position:absolute;inset:0;background:radial-gradient(200px 200px at 80% 20%,rgba(255,255,255,.3),transparent)"></div>
+        <div style="position:absolute;top:24px;right:26px;font-size:64px;opacity:.9;filter:drop-shadow(0 8px 20px rgba(0,0,0,.4))">${hero.motif}</div>
+      </div>
+      <div class="scrim"></div>
+      <div class="meta">
+        <span class="badge">◆ Featured original</span>
+        <h3>${hero.t}</h3>
+        <div class="sub">${hero.a} · ★ ${hero.rate} · ${hero.tags.join(' · ')}</div>
+        <div class="cta">
+          <button class="btn primary" onclick="event.stopPropagation();openReader(${hero.id})">▶ Continue · Ch ${hero.read}</button>
+          <button class="btn glass" onclick="event.stopPropagation();openDetail(${hero.id})">Details</button>
+        </div>
+      </div>
+    </div>
+    <div class="section"><div class="head"><h4>Continue reading</h4><a onclick="go('library')">Library</a></div>${rail(cont,true)}</div>
+    <div class="section"><div class="head"><h4>Trending now</h4><a onclick="go('browse')">See all</a></div>${rail([3,5,7,8,1].map(i=>TITLES[i]))}</div>
+    <div class="section"><div class="head"><h4>New &amp; rising creators</h4><a onclick="go('browse')">See all</a></div>${rail([9,4,6,2,0].map(i=>TITLES[i]))}</div>
+    <div class="section"><div class="head"><h4>Webtoons · vertical scroll</h4></div>${rail(TITLES.filter(o=>o.fmt==='manhwa'))}</div>
+    <div style="height:8px"></div>`;
+}
+
+function renderBrowse(){
+  const cats=['All','Action','Romance','Fantasy','Sci-Fi','Slice of life','Comedy','Thriller'];
+  document.getElementById('browse-chips').innerHTML = cats.map((c,i)=>`<div class="chip ${i===0?'on':''}" onclick="filterBrowse(this)">${c}</div>`).join('');
+  document.getElementById('browse-grid').innerHTML = TITLES.map(o=>cardHTML(o)).join('');
+}
+function filterBrowse(el){ [...el.parentNode.children].forEach(c=>c.classList.remove('on')); el.classList.add('on'); }
+
+function renderLibrary(){
+  const cont = TITLES.filter(o=>o.prog>0&&o.prog<1);
+  const mine = [0,2,6,9,4,1].map(i=>TITLES[i]);
+  document.getElementById('lib-continue').innerHTML = cont.map(o=>cardHTML(o,true)).join('');
+  document.getElementById('lib-grid').innerHTML = mine.map(o=>cardHTML(o,true)).join('');
+}
+
+/* ---------- detail ---------- */
+function openDetail(id){
+  const o=TITLES[id];
+  const chs = Array.from({length:6},(_,i)=>{
+    const n=o.ch-i; const read = n<=o.read; const latest=i===0;
+    return `<div class="chrow ${read?'read':''}" onclick="openReader(${id},${n})">
+      <div class="num">${n}</div>
+      <div class="ci"><div class="cn">Chapter ${n}${latest?' — Latest':''}</div><div class="cd">${read?'Read':'New'} · ${18+i} pages · ${['2d','5d','1w','2w','3w','1mo'][i]} ago</div></div>
+      ${latest?'<span class="hd">HD</span>':'<span class="free">FREE</span>'}
+    </div>`;
+  }).join('');
+  document.getElementById('view-detail').innerHTML = `
+    <div class="banner" style="background:linear-gradient(135deg,${o.g[0]},${o.g[1]})">
+      <div class="back iconbtn" onclick="go(lastTab)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg></div>
+      <div style="position:absolute;top:60px;right:24px;font-size:74px;opacity:.85">${o.motif}</div>
+      <div class="scrim"></div>
+    </div>
+    <div class="body">
+      <div class="head-row">
+        <div class="poster">${coverArt(o)}</div>
+        <div class="ti">
+          <h2>${o.t}</h2>
+          <div class="by">${o.a} · <span class="fmt ${o.fmt}" style="position:static;font-size:9px;padding:2px 6px;border-radius:5px">${o.fmt}</span></div>
+          <div class="stat"><span>★ <b>${o.rate}</b></span><span><b>${o.ch}</b> ch</span><span><b>1.2M</b> reads</span></div>
+        </div>
+      </div>
+      <div class="gens">${o.tags.map(t=>`<span>${t}</span>`).join('')}</div>
+      <div class="syn">${o.syn}</div>
+      <div class="ctarow">
+        <button class="btn primary block" onclick="openReader(${id})">${o.read>0?`▶ Continue · Ch ${o.read}`:'▶ Start reading — free'}</button>
+        <button class="iconbtn" style="width:46px;height:46px" onclick="toast('Added to Library','dot')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14v18l-7-5-7 5z"/></svg></button>
+        <button class="iconbtn" style="width:46px;height:46px" onclick="tip()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 8.5c0 4-8 11-8 11s-8-7-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 8.5z"/></svg></button>
+      </div>
+      <div class="perks">
+        <div class="ph"><span class="g">✦ Premium</span> &nbsp;for this title</div>
+        <ul>
+          <li><span class="ic">◉</span> HD / 4K pages</li>
+          <li><span class="ic">⤓</span> EPUB &amp; CBZ download</li>
+          <li><span class="ic">✈</span> Offline reading</li>
+          <li class="locked">Or <b style="color:var(--gold)">buy to own</b> · $4.99 — one-time, yours forever</li>
+        </ul>
+      </div>
+      <div class="chapters">
+        <div class="ch-head"><h4>Chapters</h4><div class="ct">${o.ch} total · newest first</div></div>
+        ${chs}
+      </div>
+      <div style="height:20px"></div>
+    </div>`;
+  showView('detail');
+}
+
+/* ---------- reader ---------- */
+function openReader(id, chap){
+  const o=TITLES[id]; cur.o=o; cur.chap=chap||o.read||1; cur.xray=false;
+  document.getElementById('r-title').textContent=o.t;
+  setTier();
+  cur.page = Math.max(1, Math.round((o.prog||0)*18))||1;
+  document.getElementById('r-range').max=18;
+  document.getElementById('xbtn').classList.remove('on');
+  document.getElementById('xraybar').classList.remove('on');
+  document.getElementById('reader').classList.add('open');
+  immersive=false; document.getElementById('reader').classList.remove('immersive');
+  setMode(o.fmt==='manga'?'page':'scroll');   // manga defaults to single page, manhwa to scroll
+}
+function renderPage(){
+  const pg=document.getElementById('pg');
+  pg.innerHTML = mangaPage(cur.o, cur.page, 18);
+  if(cur.view==='page'){ pg.style.animation='none'; void pg.offsetWidth; pg.style.animation='pagein .26s ease'; }
+  else pg.style.animation='';
+  document.getElementById('r-pn').textContent = cur.page+' / 18';
+  document.getElementById('r-range').value = cur.page;
+  applyXray();
+}
+function renderWebtoon(o){
+  let h='';
+  // intersperse an ad slot for free users (locked decision: standard + ads)
+  for(let i=0;i<14;i++){
+    h+=`<div class="slice">${webtoonSlice(o,i)}</div>`;
+    if(i===6 && !premium && adsOn){
+      h+=`<div style="padding:18px 16px"><div class="adslot"><b>Sponsored</b>Ad-supported free reading · Go Premium to remove</div></div>`;
+    }
+  }
+  h+=`<div style="padding:40px 20px 60px;text-align:center;color:var(--muted);font-size:13px">
+      <div style="font-size:30px;margin-bottom:8px">✦</div>End of chapter · <span style="color:var(--accent);font-weight:700">Next →</span>
+      <div style="margin-top:18px"><button class="btn gold sm" onclick="qualityWall('hd')">Read this in HD</button></div></div>`;
+  document.getElementById('strip').innerHTML=h;
+  document.getElementById('webtoon').scrollTop=0;
+}
+function setMode(m){
+  cur.view=m;
+  document.querySelectorAll('#modeseg button').forEach(b=>b.classList.toggle('on', b.dataset.m===m));
+  const pv=document.getElementById('pageview'), wt=document.getElementById('webtoon'), sw=document.getElementById('scrubwrap');
+  pv.classList.toggle('book', m==='book');
+  if(m==='scroll'){ pv.classList.remove('on'); wt.classList.add('on'); sw.style.display='none'; renderWebtoon(cur.o); applyXray(); }
+  else { wt.classList.remove('on'); pv.classList.add('on'); sw.style.display='flex'; renderPage(); }
+  document.getElementById('r-chap').textContent='Chapter '+(cur.chap||1)+' · '+(m==='scroll'?'webtoon scroll':m==='book'?'book · page-turn':'single page');
+}
+function flip(dir){ // RTL: tapping LEFT advances
+  if(cur.view==='scroll')return;
+  const np=Math.min(18,Math.max(1,cur.page+dir));
+  if(np===cur.page)return;
+  if(cur.view==='book'){            // animate a turning leaf showing the OLD page
+    const layer=document.getElementById('leaflayer');
+    layer.innerHTML=`<div class="leaf" style="transform-origin:${dir>0?'right center':'left center'}">${document.getElementById('pg').innerHTML}</div>`;
+    const el=layer.firstElementChild;
+    cur.page=np; renderPage();       // new page is already underneath
+    requestAnimationFrame(()=>{ el.classList.add('go'); el.style.transform=`rotateY(${dir>0?-168:168}deg)`; });
+    setTimeout(()=>{ layer.innerHTML=''; },600);
+  } else { cur.page=np; renderPage(); }
+}
+function seek(v){ cur.page=+v; renderPage(); }
+
+/* ---------- X-Ray ---------- */
+function toggleXray(){
+  cur.xray=!cur.xray;
+  document.getElementById('xbtn').classList.toggle('on',cur.xray);
+  applyXray();
+  toast(cur.xray?'X-Ray on — tap a glowing character':'X-Ray off');
+}
+function applyXray(){
+  const layer=document.getElementById('xraylayer'), bar=document.getElementById('xraybar');
+  if(!layer)return;
+  if(cur.xray && cur.view!=='scroll'){
+    layer.innerHTML=HOTSPOTS.map(h=>`<button class="hotspot" style="left:${h.x}%;top:${h.y}%" onclick="openXray('${h.id}')" aria-label="X-Ray character"></button>`).join('');
+    layer.classList.add('on'); bar.classList.add('on');
+    document.getElementById('xray-cast').innerHTML=CAST.map(c=>`<div class="castchip" onclick="openXray('${c.id}')"><span class="ci" style="background:${c.hue}">${c.init}</span>${c.name}</div>`).join('');
+  } else { layer.classList.remove('on'); layer.innerHTML=''; bar.classList.remove('on'); }
+}
+function setXraySheet(html){ document.getElementById('xray-sheet').innerHTML=html; document.getElementById('xray').classList.add('open'); }
+function closeXray(){ document.getElementById('xray').classList.remove('open'); }
+function openXray(id){
+  const c=CAST.find(x=>x.id===id); if(!c)return;
+  setXraySheet(`<div class="grab"></div>
+    <div class="xchar"><div class="xav" style="background:linear-gradient(135deg,${c.hue},rgba(255,255,255,.22))">${c.init}</div>
+      <div><div class="xname">${c.name}</div><div class="xrole">${c.role}</div></div><span class="xpremium">✦ X-Ray</span></div>
+    <div class="xtags">${c.tags.map(t=>`<span>${t}</span>`).join('')}</div>
+    <p class="xbio">${c.bio}</p>
+    <div class="xmeta"><div><b>First seen</b>${c.first}</div><div><b>Relationship</b>${c.rel}</div></div>
+    <button class="btn glass block" style="margin-top:16px" onclick="closeXray()">🔒 Spoiler-safe — only what you've read</button>`);
+}
+function openXraySheet(kind){
+  if(kind==='recap')
+    setXraySheet(`<div class="grab"></div><h3 style="text-align:left;font-size:18px">↺ The story so far</h3>
+      <p class="xbio" style="margin-top:12px">${RECAP}</p>
+      <div style="margin-top:10px;font-size:11.5px;color:var(--faint)">Recaps stop where you left off — never spoil ahead. <span style="color:#cbbcff;font-weight:700">✦ Premium</span></div>
+      <button class="btn glass block" style="margin-top:16px" onclick="closeXray()">Got it</button>`);
+  else
+    setXraySheet(`<div class="grab"></div><h3 style="text-align:left;font-size:18px">❖ Glossary</h3>
+      <div class="xlist" style="margin-top:12px">${GLOSSARY.map(g=>`<div class="gi"><b>${g.t}</b><span>${g.d}</span></div>`).join('')}</div>
+      <button class="btn glass block" style="margin-top:16px" onclick="closeXray()">Close</button>`);
+}
+function setTier(){ const t=document.getElementById('r-tier'); if(premium){t.className='rtag hd';t.textContent='HD';}else{t.className='rtag std';t.textContent='STD';} }
+function toggleImmersive(){ immersive=!immersive; document.getElementById('reader').classList.toggle('immersive',immersive); }
+function closeReader(){ document.getElementById('reader').classList.remove('open'); closeXray(); cur.xray=false; document.getElementById('xbtn').classList.remove('on'); document.getElementById('xraybar').classList.remove('on'); }
+
+/* ---------- quality wall ---------- */
+function qualityWall(kind){
+  if(premium){ toast(kind==='hd'?'Switched to HD ✓':'Preparing EPUB + CBZ…','dot'); if(kind==='hd'){setTier(); if(cur.mode==='manga')renderPage();} return; }
+  const art=document.getElementById('wall-art'), tt=document.getElementById('wall-title'), su=document.getElementById('wall-sub');
+  if(kind==='epub'){art.textContent='⤓';tt.textContent='Download as EPUB';su.textContent='Keep this chapter forever — EPUB & CBZ, HD quality, readable offline anywhere.';}
+  else{art.textContent='◉';tt.textContent='Read this in HD';su.textContent="You're reading the full story free at standard quality. Premium unlocks the good stuff.";}
+  document.getElementById('wall').classList.add('open');
+}
+function closeWall(){ document.getElementById('wall').classList.remove('open'); }
+function goPremium(){
+  premium=true; closeWall();
+  document.getElementById('prof-plan').textContent='👑 Premium · trial';
+  document.getElementById('prof-plan').className='pp pro';
+  setTier();
+  if(document.getElementById('reader').classList.contains('open')){
+    if(cur.mode==='manga')renderPage(); else renderWebtoon(cur.o);
+  }
+  toast('Welcome to Premium ✦ HD unlocked','dot');
+}
+function toggleAds(el){ adsOn=!adsOn; el.classList.toggle('on',adsOn);
+  if(document.getElementById('reader').classList.contains('open')&&cur.mode==='webtoon')renderWebtoon(cur.o);
+  toast(adsOn?'Showing free-tier ads':'Ads hidden (demo)'); }
+function tip(){ const amt=['$1','$3','$5'][Math.floor(performance.now())%3]; toast('💜 Tipped '+cur.o?.a?'💜 Tip sent to creator':'💜 Tip sent','dot'); }
+
+/* ---------- nav ---------- */
+let lastTab='home';
+function showView(name){
+  ['home','browse','library','premium','profile','detail'].forEach(v=>{
+    document.getElementById('view-'+v).classList.toggle('hidden', v!==name);
+  });
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on', b.dataset.v===name));
+}
+function go(name){ lastTab=name; closeReader(); showView(name);
+  if(name==='home')renderHome(); if(name==='browse')renderBrowse(); if(name==='library')renderLibrary();
+  document.getElementById('view-'+name).scrollTop=0;
+}
+let toastT;
+function toast(msg){ const t=document.getElementById('toast'); document.getElementById('toast-msg').textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),1900); }
+
+/* ---------- init ---------- */
+renderHome(); renderBrowse(); renderLibrary();
+
+/* PWA: register the service worker for offline + installability */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
