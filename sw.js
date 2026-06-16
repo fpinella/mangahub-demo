@@ -1,5 +1,5 @@
 /* MangaHub mock — offline-capable service worker (cache-first app shell) */
-const CACHE = 'mangahub-mock-v2';
+const CACHE = 'mangahub-mock-v1';
 const ASSETS = [
   './', './index.html', './manifest.webmanifest',
   './icon-180.png', './icon-192.png', './icon-512.png'

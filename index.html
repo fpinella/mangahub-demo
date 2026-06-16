@@ -311,18 +311,61 @@
   .xlist .gi span{font-size:12.5px;color:var(--muted);line-height:1.5}
 
   .hidden{display:none!important}
-  @media(max-width:900px){.pitch{display:none}.stage{gap:0}}
-  /* installed PWA / phone: fill screen, respect notch, drop the fake chrome */
-  @media all and (display-mode:standalone){ .statusbar{display:none} .view{padding-top:env(safe-area-inset-top)} }
-  @media(max-width:440px){
-    body{padding:0}
-    .phone{width:100vw;height:100vh;height:100dvh;max-height:none;border-radius:0;padding:0;box-shadow:none}
-    .screen{border-radius:0}
-    .notch{display:none}.statusbar{display:none}
+
+  /* ===== Responsive shell: a real app at all widths — no phone bezel ===== */
+  body{padding:0}
+  .stage{gap:0}
+  .pitch{display:none}                 /* the app itself is the experience */
+  .phone{width:100vw;height:100dvh;max-height:none;border-radius:0;padding:0;box-shadow:none;background:var(--bg)}
+  .screen{border-radius:0}
+  .notch,.statusbar{display:none}
+  .navbrand,.navspacer{display:none}
+
+  /* Mobile (default + installed PWA): bottom tab bar + safe areas */
+  @media all and (display-mode:standalone){ .view{padding-top:env(safe-area-inset-top)} }
+  @media(max-width:859px){
     .view{padding-top:env(safe-area-inset-top)}
     .topbar{padding-top:calc(6px + env(safe-area-inset-top))}
-    .nav{padding-bottom:calc(22px + env(safe-area-inset-bottom));height:auto}
+    .nav{padding-bottom:calc(22px + env(safe-area-inset-bottom))}
     .rtop{padding-top:calc(46px + env(safe-area-inset-top))}
+  }
+
+  /* ===== Desktop / wide (>=860px): left sidebar, multi-column, centered reader ===== */
+  @media(min-width:860px){
+    .nav{top:0;bottom:auto;left:0;right:auto;height:100%;width:252px;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:4px;padding:20px 14px;background:var(--surface);border-top:none;border-right:1px solid var(--border);backdrop-filter:none}
+    .nav .navbrand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.4px;padding:4px 10px 16px;color:var(--text)}
+    .nav .navbrand .mark{width:30px;height:30px;border-radius:8px;background:var(--grad);display:grid;place-items:center;font-size:15px;color:#fff}
+    .nav button{flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:13px;width:100%;padding:11px 13px;border-radius:11px;font-size:14px}
+    .nav button svg{width:21px;height:21px}
+    .nav button.on{background:var(--surface-2)}
+
+    .view{margin-left:252px;padding-bottom:40px}
+    .topbar{padding:14px 30px}
+    .topbar h2{font-size:26px}
+    .hero{height:360px;margin:8px 30px 10px}
+    .hero h3{font-size:34px}
+    .section .head{padding:0 30px 12px}
+    .section .head h4{font-size:18px}
+    .rail{padding:0 30px 8px;gap:16px}
+    .rail .card{width:152px}
+    .rail .card .cover{width:152px;height:216px}
+    .chips{padding:2px 30px 16px}
+    .grid{grid-template-columns:repeat(auto-fill,minmax(152px,1fr));gap:18px;padding:6px 30px;max-width:1320px;margin-left:auto;margin-right:auto}
+    .grid .card .cover{aspect-ratio:124/176}
+    .detail .body{max-width:1000px;margin-left:auto;margin-right:auto}
+    .detail .banner{height:340px}
+    .prem,.profile{max-width:560px;margin-left:auto;margin-right:auto}
+
+    /* reader: immersive full-screen, but controls + webtoon strip centered */
+    .reader .rtop{padding:22px 30px 14px}
+    .reader .rbot{padding:14px 30px 24px}
+    .reader .modebar,.reader .scrub,.reader .rtools{max-width:720px;margin-left:auto;margin-right:auto}
+    .webtoon .strip{max-width:760px;margin:0 auto}
+    .xraybar{left:50%;right:auto;transform:translateX(-50%);width:680px;max-width:90%;top:82px}
+
+    /* bottom sheets become centered modal cards */
+    .scrim-bg{align-items:center;justify-content:center}
+    .sheet{max-width:460px;border-radius:24px;border:1px solid var(--border);animation:fade .2s}
   }
 </style>
 </head>
@@ -507,6 +550,7 @@
 
       <!-- BOTTOM NAV -->
       <div class="nav" id="nav">
+        <div class="navbrand"><span class="mark">◳</span> MangaHub</div>
         <button class="on" data-v="home" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Home</button>
         <button data-v="browse" onclick="go('browse')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>Browse</button>
         <button data-v="library" onclick="go('library')"><svg viewBox="0 0 24 24"><path d="M4 4h12a2 2 0 0 1 2 2v15l-8-4-8 4V6a2 2 0 0 1 2-2z"/></svg>Library</button>
