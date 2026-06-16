@@ -574,6 +574,7 @@ const TITLES = [
 
 /* ---------- placeholder art ---------- */
 function coverArt(o, big){
+  if(o.cover) return `<img class="art" src="${o.cover}" style="width:100%;height:100%;object-fit:cover;display:block" alt="${o.t}">`;
   return `<div class="art ph" style="background:linear-gradient(150deg,${o.g[0]},${o.g[1]})">
       <div style="position:absolute;inset:0;background:
         radial-gradient(60px 60px at 78% 22%,rgba(255,255,255,.35),transparent 70%),
@@ -656,6 +657,11 @@ function mangaPanel(seed, idx, beat){
   return `<svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block">${motifArt((seed+idx)%6)}${txt}</svg>`;
 }
 function mangaPage(o, n, total){
+  if(o.pages){   // real imported page image
+    const src=o.pages[(n-1)%o.pages.length];
+    return `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000;padding:6px">
+      <img src="${src}" loading="eager" style="max-width:100%;max-height:100%;object-fit:contain;box-shadow:0 8px 36px rgba(0,0,0,.6)" alt="page ${n}"></div>`;
+  }
   const beat=SCENE[(n-1)%SCENE.length], id=o.id;
   const P=(i,b)=>`<div style="border:2.4px solid ${INK};overflow:hidden;background:${PAPER}">${mangaPanel(id,i,b)}</div>`;
   let grid; const t=n%4;
@@ -800,8 +806,9 @@ function openReader(id, chap){
   const o=TITLES[id]; cur.o=o; cur.chap=chap||o.read||1; cur.xray=false;
   document.getElementById('r-title').textContent=o.t;
   setTier();
-  cur.page = Math.max(1, Math.round((o.prog||0)*18))||1;
-  document.getElementById('r-range').max=18;
+  cur.total = o.pages ? o.pages.length : 18;
+  cur.page = o.pages ? 1 : (Math.max(1, Math.round((o.prog||0)*18))||1);
+  document.getElementById('r-range').max=cur.total;
   document.getElementById('xbtn').classList.remove('on');
   document.getElementById('xraybar').classList.remove('on');
   document.getElementById('reader').classList.add('open');
@@ -810,15 +817,23 @@ function openReader(id, chap){
 }
 function renderPage(){
   const pg=document.getElementById('pg');
-  pg.innerHTML = mangaPage(cur.o, cur.page, 18);
+  pg.innerHTML = mangaPage(cur.o, cur.page, cur.total);
   if(cur.view==='page'){ pg.style.animation='none'; void pg.offsetWidth; pg.style.animation='pagein .26s ease'; }
   else pg.style.animation='';
-  document.getElementById('r-pn').textContent = cur.page+' / 18';
+  document.getElementById('r-pn').textContent = cur.page+' / '+cur.total;
   document.getElementById('r-range').value = cur.page;
   applyXray();
 }
 function renderWebtoon(o){
   let h='';
+  if(o.pages){   // real imported pages
+    o.pages.forEach((s,i)=>{
+      h+=`<img src="${s}" style="display:block;width:100%" loading="lazy" alt="">`;
+      if(i===5 && !premium && adsOn){ h+=`<div style="padding:18px 16px"><div class="adslot"><b>Sponsored</b>Ad-supported free reading · Go Premium to remove</div></div>`; }
+    });
+    h+=`<div style="padding:40px 20px 60px;text-align:center;color:var(--muted);font-size:13px"><div style="font-size:30px;margin-bottom:8px">✦</div>End of chapter · <span style="color:var(--accent);font-weight:700">Next →</span></div>`;
+    document.getElementById('strip').innerHTML=h; document.getElementById('webtoon').scrollTop=0; return;
+  }
   // intersperse an ad slot for free users (locked decision: standard + ads)
   for(let i=0;i<14;i++){
     h+=`<div class="slice">${webtoonSlice(o,i)}</div>`;
@@ -843,7 +858,7 @@ function setMode(m){
 }
 function flip(dir){ // RTL: tapping LEFT advances
   if(cur.view==='scroll')return;
-  const np=Math.min(18,Math.max(1,cur.page+dir));
+  const np=Math.min(cur.total,Math.max(1,cur.page+dir));
   if(np===cur.page)return;
   if(cur.view==='book'){            // animate a turning leaf showing the OLD page
     const layer=document.getElementById('leaflayer');
@@ -945,6 +960,11 @@ renderHome(); renderBrowse(); renderLibrary();
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }
+</script>
+<script>
+TITLES.unshift({id:999,t:'Pepper & Carrot',a:'David Revoy',fmt:'manhwa',g:['#2e9e8f','#7c5cff'],rate:'4.9',tags:['Fantasy','Comedy','All-ages','CC-BY'],motif:'🧪',ch:40,read:0,prog:0,cover:'pepper/cover.jpg',syn:'Pepper, a young witch of Chaosah, brews potions with her cat Carrot. A free/libre webcomic by David Revoy, licensed CC-BY 4.0 (peppercarrot.com). Real pages, legally shareable.',pages:['pepper/001.jpg','pepper/002.jpg','pepper/003.jpg','pepper/004.jpg','pepper/005.jpg','pepper/006.jpg','pepper/007.jpg','pepper/008.jpg','pepper/009.jpg']});
+TITLES.forEach((t,i)=>t.id=i);
+renderHome();renderBrowse();renderLibrary();
 </script>
 </body>
 </html>
