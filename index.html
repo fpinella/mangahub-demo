@@ -219,6 +219,18 @@
   .pageview{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#000}
   .pageview.on{display:flex}
   .pageview .pg{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+  /* single page */
+  .pgwrap{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000;padding:8px}
+  .pgwrap .pimg,.scell .pimg{max-width:100%;max-height:100%;object-fit:contain;display:block;box-shadow:0 8px 36px rgba(0,0,0,.55)}
+  .paper{background:#ece5d7;padding:8px;border-radius:2px;box-shadow:0 12px 44px rgba(0,0,0,.6);display:flex;flex-direction:column}
+  .pgwrap .paper{width:100%;max-width:356px;aspect-ratio:2/3}
+  /* two-page spread (book mode, wide resolutions) */
+  .spread{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000;padding:16px 12px}
+  .spread .scell{flex:1;min-width:0;height:100%;display:flex;align-items:center}
+  .spread .scell.left{justify-content:flex-end;padding-right:2px}
+  .spread .scell.right{justify-content:flex-start;padding-left:2px}
+  .spread .scell .paper{height:100%;aspect-ratio:2/3;width:auto;max-width:100%}
+  .spread .scell .pimg{max-height:100%}
   .pageview .tapL,.pageview .tapR,.pageview .tapC{position:absolute;top:0;bottom:0;z-index:10;cursor:pointer}
   .pageview .tapL{left:0;width:33%}.pageview .tapR{right:0;width:33%}.pageview .tapC{left:33%;width:34%}
   .rbot .scrub{display:flex;align-items:center;gap:11px;direction:rtl}
@@ -824,12 +836,7 @@ function mangaPanel(seed, idx, beat){
   }
   return `<svg viewBox="0 0 100 60" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%;display:block">${motifArt((seed+idx)%6)}${txt}</svg>`;
 }
-function mangaPage(o, n, total){
-  if(o.pages){   // real imported page image
-    const src=o.pages[(n-1)%o.pages.length];
-    return `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000;padding:6px">
-      <img src="${src}" loading="eager" style="max-width:100%;max-height:100%;object-fit:contain;box-shadow:0 8px 36px rgba(0,0,0,.6)" alt="page ${n}"></div>`;
-  }
+function mangaPaper(o, n, total){   // the cream B&W page itself (no outer frame)
   const beat=SCENE[(n-1)%SCENE.length], id=o.id;
   const P=(i,b)=>`<div style="border:2.4px solid ${INK};overflow:hidden;background:${PAPER}">${mangaPanel(id,i,b)}</div>`;
   let grid; const t=n%4;
@@ -837,12 +844,27 @@ function mangaPage(o, n, total){
   else if(t===1) grid=`<div style="display:grid;grid-template-columns:1fr 1.15fr;gap:6px;height:100%"><div style="display:grid;grid-template-rows:1fr 1fr;gap:6px">${P(n+2)}${P(n+1)}</div>${P(n,beat)}</div>`;
   else if(t===2) grid=`<div style="display:grid;grid-template-rows:1fr 1fr 1fr;gap:6px;height:100%">${P(n,beat)}${P(n+1)}${P(n+2)}</div>`;
   else grid=`<div style="display:grid;grid-template-rows:1.4fr 1fr;gap:6px;height:100%">${P(n,beat)}<div style="display:grid;grid-template-columns:1fr 1.3fr;gap:6px">${P(n+1)}${P(n+2)}</div></div>`;
-  return `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#000;padding:8px">
-    <div style="width:100%;max-width:356px;aspect-ratio:2/3;background:#ece5d7;padding:8px;border-radius:2px;box-shadow:0 12px 44px rgba(0,0,0,.6);display:flex;flex-direction:column">
+  return `<div class="paper">
       <div style="flex:1;min-height:0">${grid}</div>
       <div style="padding-top:6px;color:#8a8275;font-size:9px;display:flex;justify-content:space-between;font-family:Georgia"><span>${o.t}</span><span>${n} / ${total}</span></div>
-    </div></div>`;
+    </div>`;
 }
+function pageMedia(o, n, total){   // one page's visual (image or generated), no centering frame
+  if(o.pages){ const src=o.pages[(n-1)%o.pages.length]; return `<img class="pimg" src="${src}" loading="eager" alt="page ${n}">`; }
+  return mangaPaper(o, n, total);
+}
+function mangaPage(o, n, total){   // single page centered on black
+  return `<div class="pgwrap">${pageMedia(o,n,total)}</div>`;
+}
+function mangaSpread(o, n, total){ // two-page spread (RTL: right page = n, read first; left page = n+1)
+  const leftN=n+1, hasLeft=leftN<=total;
+  return `<div class="spread">
+    <div class="scell left">${hasLeft?pageMedia(o,leftN,total):''}</div>
+    <div class="scell right">${pageMedia(o,n,total)}</div>
+  </div>`;
+}
+function fitsSpread(){ return window.innerWidth>=720 && (window.innerWidth/window.innerHeight)>=1.2; }
+function isSpread(){ return cur.view==='book' && fitsSpread(); }
 function webtoonSlice(o, i){
   const c=o.g, H=46+(i%4)*16, beat=SCENE[i%SCENE.length], gid=`wg${o.id}_${i}`;
   let txt='';
@@ -985,10 +1007,12 @@ function openReader(id, chap){
 }
 function renderPage(){
   const pg=document.getElementById('pg');
-  pg.innerHTML = mangaPage(cur.o, cur.page, cur.total);
-  if(cur.view==='page'){ pg.style.animation='none'; void pg.offsetWidth; pg.style.animation='pagein .26s ease'; }
+  const sp=isSpread();
+  pg.innerHTML = sp ? mangaSpread(cur.o, cur.page, cur.total) : mangaPage(cur.o, cur.page, cur.total);
+  if(cur.view==='page' || sp){ pg.style.animation='none'; void pg.offsetWidth; pg.style.animation='pagein .26s ease'; }
   else pg.style.animation='';
-  document.getElementById('r-pn').textContent = cur.page+' / '+cur.total;
+  const end=Math.min(cur.page+1, cur.total);
+  document.getElementById('r-pn').textContent = sp ? (cur.page+'–'+end+' / '+cur.total) : (cur.page+' / '+cur.total);
   document.getElementById('r-range').value = cur.page;
   applyXray();
 }
@@ -1026,18 +1050,23 @@ function setMode(m){
 }
 function flip(dir){ // RTL: tapping LEFT advances
   if(cur.view==='scroll')return;
-  const np=Math.min(cur.total,Math.max(1,cur.page+dir));
+  const step=isSpread()?2:1;                          // a spread turns two pages at once
+  const np=Math.min(cur.total,Math.max(1,cur.page+dir*step));
   if(np===cur.page)return;
-  if(cur.view==='book'){            // animate a turning leaf showing the OLD page
+  if(cur.view==='book' && !isSpread()){               // single-page book: animate a turning leaf
     const layer=document.getElementById('leaflayer');
     layer.innerHTML=`<div class="leaf" style="transform-origin:${dir>0?'right center':'left center'}">${document.getElementById('pg').innerHTML}</div>`;
     const el=layer.firstElementChild;
-    cur.page=np; renderPage();       // new page is already underneath
+    cur.page=np; renderPage();
     requestAnimationFrame(()=>{ el.classList.add('go'); el.style.transform=`rotateY(${dir>0?-168:168}deg)`; });
     setTimeout(()=>{ layer.innerHTML=''; },600);
-  } else { cur.page=np; renderPage(); }
+  } else { cur.page=np; renderPage(); }                // page mode + two-page spread: fade
 }
 function seek(v){ cur.page=+v; renderPage(); }
+/* re-evaluate single vs two-page when the window resizes (book mode only) */
+window.addEventListener('resize', function(){
+  if(document.getElementById('reader').classList.contains('open') && cur.view==='book') renderPage();
+});
 
 /* ---------- X-Ray ---------- */
 function toggleXray(){
