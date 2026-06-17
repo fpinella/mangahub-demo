@@ -254,6 +254,27 @@
   /* ad slot (free tier) */
   .adslot{margin:0 auto;max-width:340px;background:repeating-linear-gradient(45deg,#16161f,#16161f 12px,#191922 12px,#191922 24px);border:1px dashed var(--border-2);border-radius:12px;padding:20px;text-align:center;color:var(--faint);font-size:11px}
   .adslot b{display:block;color:var(--muted);font-size:12px;margin-bottom:3px}
+  /* in-feed sponsored card */
+  .adcard{margin:16px auto;max-width:360px;border-radius:16px;overflow:hidden;border:1px solid var(--border-2);background:var(--surface)}
+  .adcard .ah{display:flex;align-items:center;gap:7px;padding:9px 13px;font-size:10px;color:var(--faint);font-weight:800;letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--border)}
+  .adcard .ah .x{margin-left:auto;color:#cbbcff;cursor:pointer;text-transform:none;letter-spacing:0}
+  .adcard .abody{padding:15px;display:flex;gap:13px;align-items:center}
+  .adcard .aimg{width:60px;height:60px;border-radius:13px;display:grid;place-items:center;font-size:28px;flex:0 0 auto}
+  .adcard .at{font-size:14px;font-weight:800}
+  .adcard .as{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}
+  .adcard .acta{margin:0 15px 15px;display:block;width:calc(100% - 30px);text-align:center;background:var(--surface-2);border:1px solid var(--border-2);color:var(--text);font-weight:700;font-size:12.5px;padding:10px;border-radius:10px;cursor:pointer}
+  /* full-screen interstitial */
+  .adover{position:absolute;inset:0;z-index:170;background:radial-gradient(120% 80% at 50% 0,#1a1430,#06060a 60%);display:none;flex-direction:column;align-items:center;justify-content:center;padding:26px;text-align:center;animation:fade .2s}
+  .adover.open{display:flex}
+  .adover .atag{position:absolute;top:calc(16px + env(safe-area-inset-top));left:16px;font-size:10px;font-weight:800;letter-spacing:.5px;color:#cfcfda;text-transform:uppercase;background:rgba(0,0,0,.4);border:1px solid var(--border-2);padding:5px 10px;border-radius:7px}
+  .adover .askip{position:absolute;top:calc(14px + env(safe-area-inset-top));right:16px;font-size:12px;font-weight:700;color:#fff;background:rgba(0,0,0,.5);border:1px solid var(--border-2);padding:8px 13px;border-radius:9px;cursor:pointer}
+  .adover .askip:disabled{opacity:.55;cursor:default}
+  .adover .acreative{width:100%;max-width:320px;border-radius:20px;padding:30px 22px;border:1px solid rgba(255,255,255,.18);box-shadow:0 20px 50px rgba(0,0,0,.45)}
+  .adover .acreative .big{font-size:46px;margin-bottom:10px}
+  .adover .acreative h3{font-size:21px;font-weight:800;letter-spacing:-.4px;color:#fff}
+  .adover .acreative p{font-size:13px;color:rgba(255,255,255,.85);margin-top:8px;line-height:1.5}
+  .adover .acreative .b{margin-top:16px;background:#fff;color:#141414;font-weight:800;font-size:13px;padding:11px 18px;border-radius:999px;display:inline-block}
+  .adover .arem{margin-top:24px;font-size:12.5px;color:#cbbcff;cursor:pointer;font-weight:700}
 
   /* modal / sheet */
   .scrim-bg{position:absolute;inset:0;z-index:200;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center}
@@ -709,6 +730,7 @@
             <div><span class="ic">⊘</span> No ads, ever</div>
           </div>
           <button class="btn gold block" onclick="goPremium()">Start free trial → Premium</button>
+          <button class="btn glass block" id="wall-reward" style="display:none;margin-top:10px" onclick="rewardedHD()">▶ Mirar un anuncio · HD por este capítulo</button>
           <div class="alt" onclick="closeWall()">Keep reading free in standard</div>
         </div>
       </div>
@@ -734,6 +756,14 @@
       <!-- X-Ray sheet -->
       <div class="scrim-bg" id="xray" onclick="if(event.target===this)closeXray()">
         <div class="sheet" id="xray-sheet"></div>
+      </div>
+
+      <!-- full-screen ad interstitial -->
+      <div class="adover" id="adover">
+        <div class="atag">Anuncio</div>
+        <button class="askip" id="ad-skip" onclick="adSkip()">Saltar en 5s</button>
+        <div class="acreative" id="ad-creative"></div>
+        <div class="arem" onclick="goPremiumFromAd()">✦ Quitar anuncios con Premium</div>
       </div>
 
       <div class="toast" id="toast"><span class="dot"></span><span id="toast-msg">Done</span></div>
@@ -1019,7 +1049,7 @@ function openDetail(id){
 
 /* ---------- reader ---------- */
 function openReader(id, chap){
-  const o=TITLES[id]; cur.o=o; cur.chap=chap||o.read||1; cur.xray=false;
+  const o=TITLES[id]; cur.o=o; cur.chap=chap||o.read||1; cur.xray=false; cur.adHD=false;
   document.getElementById('r-title').textContent=o.t;
   setTier();
   cur.total = o.pages ? o.pages.length : 18;
@@ -1045,24 +1075,25 @@ function renderPage(){
 }
 function renderWebtoon(o){
   let h='';
+  const endCard=`<div style="padding:34px 20px 60px;text-align:center;color:var(--muted);font-size:13px">
+      <div style="font-size:30px;margin-bottom:8px">✦</div>Fin del capítulo
+      <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn primary sm" onclick="chapterEnd()">▶ Próximo capítulo</button>
+        ${(!premium)?`<button class="btn gold sm" onclick="qualityWall('hd')">Leer en HD</button>`:''}
+      </div></div>`;
   if(o.pages){   // real imported pages
     o.pages.forEach((s,i)=>{
       h+=`<img src="${s}" style="display:block;width:100%" loading="lazy" alt="">`;
-      if(i===5 && !premium && adsOn){ h+=`<div style="padding:18px 16px"><div class="adslot"><b>Sponsored</b>Ad-supported free reading · Go Premium to remove</div></div>`; }
+      if(i===5 && adsActive()){ h+=`<div style="padding:6px 14px">${adCardHTML()}</div>`; }
     });
-    h+=`<div style="padding:40px 20px 60px;text-align:center;color:var(--muted);font-size:13px"><div style="font-size:30px;margin-bottom:8px">✦</div>End of chapter · <span style="color:var(--accent);font-weight:700">Next →</span></div>`;
+    h+=endCard;
     document.getElementById('strip').innerHTML=h; document.getElementById('webtoon').scrollTop=0; return;
   }
-  // intersperse an ad slot for free users (locked decision: standard + ads)
   for(let i=0;i<14;i++){
     h+=`<div class="slice">${webtoonSlice(o,i)}</div>`;
-    if(i===6 && !premium && adsOn){
-      h+=`<div style="padding:18px 16px"><div class="adslot"><b>Sponsored</b>Ad-supported free reading · Go Premium to remove</div></div>`;
-    }
+    if(i===6 && adsActive()){ h+=`<div style="padding:6px 14px">${adCardHTML()}</div>`; }
   }
-  h+=`<div style="padding:40px 20px 60px;text-align:center;color:var(--muted);font-size:13px">
-      <div style="font-size:30px;margin-bottom:8px">✦</div>End of chapter · <span style="color:var(--accent);font-weight:700">Next →</span>
-      <div style="margin-top:18px"><button class="btn gold sm" onclick="qualityWall('hd')">Read this in HD</button></div></div>`;
+  h+=endCard;
   document.getElementById('strip').innerHTML=h;
   document.getElementById('webtoon').scrollTop=0;
 }
@@ -1079,7 +1110,7 @@ function flip(dir){ // RTL: tapping LEFT advances
   if(cur.view==='scroll')return;
   const step=isSpread()?2:1;                          // a spread turns two pages at once
   const np=Math.min(cur.total,Math.max(1,cur.page+dir*step));
-  if(np===cur.page)return;
+  if(np===cur.page){ if(dir>0) chapterEnd(); return; }   // past the last page ends the chapter (ad)
   if(cur.view==='book' && isSpread()){ spreadTurn(dir, np); return; }   // two-page: turn one leaf over the spine
   if(cur.view==='book'){                               // single-page book: animate a turning leaf
     const ltr=!!(cur.o&&cur.o.ltr), bindRight = dir>0 ? !ltr : ltr;   // which edge the page binds on
@@ -1149,33 +1180,63 @@ function openXraySheet(kind){
       <div class="xlist" style="margin-top:12px">${GLOSSARY.map(g=>`<div class="gi"><b>${g.t}</b><span>${g.d}</span></div>`).join('')}</div>
       <button class="btn glass block" style="margin-top:16px" onclick="closeXray()">Close</button>`);
 }
-function setTier(){ const t=document.getElementById('r-tier'); if(premium){t.className='rtag hd';t.textContent='HD';}else{t.className='rtag std';t.textContent='STD';} }
+function setTier(){ const t=document.getElementById('r-tier'); const hd=premium||cur.adHD; t.className='rtag '+(hd?'hd':'std'); t.textContent=hd?'HD':'STD'; }
 function toggleImmersive(){ immersive=!immersive; document.getElementById('reader').classList.toggle('immersive',immersive); }
 function closeReader(){ document.getElementById('reader').classList.remove('open'); closeXray(); cur.xray=false; document.getElementById('xbtn').classList.remove('on'); document.getElementById('xraybar').classList.remove('on'); }
+function rerenderReader(){ if(cur.view==='scroll') renderWebtoon(cur.o); else renderPage(); }
 
 /* ---------- quality wall ---------- */
 function qualityWall(kind){
-  if(premium){ toast(kind==='hd'?'Switched to HD ✓':'Preparing EPUB + CBZ…','dot'); if(kind==='hd'){setTier(); if(cur.mode==='manga')renderPage();} return; }
+  if(premium||cur.adHD){ toast(kind==='hd'?'Ya estás en HD ✓':'Preparando EPUB + CBZ…','dot'); if(kind==='hd'){setTier();rerenderReader();} return; }
   const art=document.getElementById('wall-art'), tt=document.getElementById('wall-title'), su=document.getElementById('wall-sub');
   if(kind==='epub'){art.textContent='⤓';tt.textContent='Download as EPUB';su.textContent='Keep this chapter forever — EPUB & CBZ, HD quality, readable offline anywhere.';}
   else{art.textContent='◉';tt.textContent='Read this in HD';su.textContent="You're reading the full story free at standard quality. Premium unlocks the good stuff.";}
+  const rw=document.getElementById('wall-reward'); if(rw) rw.style.display=(kind==='hd'&&adsActive())?'block':'none';
   document.getElementById('wall').classList.add('open');
 }
 function closeWall(){ document.getElementById('wall').classList.remove('open'); }
 function goPremium(){
-  premium=true; closeWall();
+  premium=true; closeWall(); closeAdOver();
   document.getElementById('prof-plan').textContent='👑 Premium · trial';
   document.getElementById('prof-plan').className='pp pro';
   setTier();
-  if(document.getElementById('reader').classList.contains('open')){
-    if(cur.mode==='manga')renderPage(); else renderWebtoon(cur.o);
-  }
+  if(document.getElementById('reader').classList.contains('open')) rerenderReader();
   toast('Welcome to Premium ✦ HD unlocked','dot');
 }
 function toggleAds(el){ adsOn=!adsOn; el.classList.toggle('on',adsOn);
-  if(document.getElementById('reader').classList.contains('open')&&cur.mode==='webtoon')renderWebtoon(cur.o);
+  if(document.getElementById('reader').classList.contains('open')) rerenderReader();
   toast(adsOn?'Showing free-tier ads':'Ads hidden (demo)'); }
-function tip(){ const amt=['$1','$3','$5'][Math.floor(performance.now())%3]; toast('💜 Tipped '+cur.o?.a?'💜 Tip sent to creator':'💜 Tip sent','dot'); }
+function tip(){ toast('💜 Tip enviado al creador','dot'); }
+
+/* ---------- ads (free tier) ---------- */
+function adsActive(){ return !premium && adsOn; }
+const AD_CREATIVES=[
+  {bg:'linear-gradient(135deg,#7c5cff,#ff4d8d)',big:'✏️',h:'Brushpen Pro',p:'La tableta para dibujar tu manga. 20% OFF hoy.',c:'Ver oferta'},
+  {bg:'linear-gradient(135deg,#0ea5e9,#6366f1)',big:'☕',h:'Cafecito',p:'Bancá a tus artistas favoritos, sin comisiones.',c:'Empezar'},
+  {bg:'linear-gradient(135deg,#231f20,#5b5b8c)',big:'◳',h:'Shinnart',p:'Estudio creativo. Próximos proyectos en camino.',c:'Conocer'},
+];
+let adIdx=0, adDone=null, adTimer=null;
+function adCardHTML(){ const a=AD_CREATIVES[(adIdx++)%AD_CREATIVES.length];
+  return `<div class="adcard"><div class="ah">Anuncio<span class="x" onclick="event.stopPropagation();go('premium')">Quitar ✕</span></div>`+
+    `<div class="abody"><div class="aimg" style="background:${a.bg}">${a.big}</div><div><div class="at">${a.h}</div><div class="as">${a.p}</div></div></div>`+
+    `<div class="acta">${a.c} →</div></div>`; }
+function showAd(label,onDone){
+  if(!adsActive()){ if(onDone)onDone(); return; }
+  adDone=onDone||null;
+  const a=AD_CREATIVES[(adIdx++)%AD_CREATIVES.length];
+  const cr=document.getElementById('ad-creative'); cr.style.background=a.bg;
+  cr.innerHTML=`<div class="big">${a.big}</div><h3>${a.h}</h3><p>${a.p}</p><span class="b">${a.c} →</span>`;
+  document.querySelector('#adover .atag').textContent=label||'Anuncio';
+  document.getElementById('adover').classList.add('open');
+  const sk=document.getElementById('ad-skip'); let s=5; sk.disabled=true; sk.textContent='Saltar en '+s+'s';
+  clearInterval(adTimer);
+  adTimer=setInterval(function(){ s--; if(s<=0){clearInterval(adTimer);sk.disabled=false;sk.textContent='Saltar anuncio ✕';} else sk.textContent='Saltar en '+s+'s'; },1000);
+}
+function adSkip(){ if(document.getElementById('ad-skip').disabled)return; closeAdOver(); }
+function closeAdOver(){ clearInterval(adTimer); document.getElementById('adover').classList.remove('open'); const d=adDone; adDone=null; if(d)d(); }
+function goPremiumFromAd(){ adDone=null; closeAdOver(); goPremium(); }
+function chapterEnd(){ showAd('Anuncio · fin del capítulo', function(){ toast('▶ Próximo capítulo (demo)','dot'); }); }
+function rewardedHD(){ closeWall(); showAd('Anuncio premiado', function(){ cur.adHD=true; setTier(); rerenderReader(); toast('HD desbloqueado por este capítulo ✓','dot'); }); }
 
 /* ---------- nav ---------- */
 let lastTab='home';
