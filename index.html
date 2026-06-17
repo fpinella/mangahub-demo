@@ -332,6 +332,10 @@
   .screen{border-radius:0}
   .notch,.statusbar{display:none}
   .navbrand,.navspacer{display:none}
+  .blogo{width:30px;height:30px;flex:0 0 auto;border-radius:8px;display:inline-block}
+  .navbrand .bwrap{display:flex;flex-direction:column;line-height:1.05}
+  .navbrand .bwrap small{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.3px}
+  .snav .snav-brand .blogo{width:28px;height:28px}
 
   /* Mobile (default + installed PWA): bottom tab bar + safe areas */
   @media all and (display-mode:standalone){ .view{padding-top:env(safe-area-inset-top)} }
@@ -507,6 +511,13 @@
       <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
         <pattern id="ht" width="3" height="3" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r=".7" fill="#000" opacity=".15"/></pattern>
         <pattern id="htd" width="2.4" height="2.4" patternUnits="userSpaceOnUse"><circle cx="1.2" cy="1.2" r=".75" fill="#000" opacity=".34"/></pattern>
+        <symbol id="shinnart" viewBox="0 0 511.34 511.34">
+          <rect fill="#231f20" x="69.5" y="69.5" width="372.35" height="372.35" rx="18.39" ry="18.39" transform="translate(-105.9 255.67) rotate(-45)"/>
+          <path fill="#f2f2f2" stroke="#f2f2f2" stroke-miterlimit="10" d="M57.8,256.51L250.15,64.16c3.05-3.05,7.99-3.05,11.04,0l38.97,38.97,13.55,13.55c3.05,3.05,3.05,7.99,0,11.04l-39.81,39.81c-3.05,3.05-7.99,3.05-11.04,0l-8.03-8.03c-3.05-3.05-7.99-3.05-11.04,0l-90.66,90.66c-3.05,3.05-3.05,7.99,0,11.04l27.1,27.1c3.05,3.05,7.99,3.05,11.04,0l141.5-141.5c3.05-3.05,7.99-3.05,11.04,0l109.72,109.72c3.05,3.05,3.05,7.99,0,11.04l-192.35,192.35c-3.05,3.05-7.99,3.05-11.04,0l-52.52-52.52c-3.05-3.05-3.05-7.99,0-11.04l39.81-39.81c3.05-3.05,7.99-3.05,11.04,0l8.03,8.03c3.05,3.05,7.99,3.05,11.04,0l90.66-90.66c3.05-3.05,3.05-7.99,0-11.04l-27.1-27.1c-3.05-3.05-7.99-3.05-11.04,0l-141.5,141.5c-3.05,3.05-7.99,3.05-11.04,0l-109.72-109.72c-3.05-3.05-3.05-7.99,0-11.04Z"/>
+          <path fill="none" stroke="#f2f2f2" stroke-width="4" stroke-miterlimit="10" d="M65,236.6L250.15,51.45c3.05-3.05,7.99-3.05,11.04,0l51.68,51.68"/>
+          <path fill="none" stroke="#f2f2f2" stroke-width="4" stroke-miterlimit="10" d="M160.33,255.67l19.9,19.9c3.05,3.05,7.99,3.05,11.04,0l141.5-141.5c3.05-3.05,7.99-3.05,11.04,0l108.89,108.89"/>
+          <path fill="none" stroke="#f2f2f2" stroke-width="4" stroke-miterlimit="10" d="M204.83,376.43l32.62-32.62c3.05-3.05,7.99-3.05,11.04,0l8.03,8.03c3.05,3.05,7.99,3.05,11.04,0l83.46-83.46"/>
+        </symbol>
       </defs></svg>
       <div class="notch"></div>
       <div class="statusbar">
@@ -632,9 +643,9 @@
 
         <div class="stagearea">
           <div class="pageview" id="pageview">
-            <div class="tapL" onclick="flip(1)"></div>
+            <div class="tapL" onclick="tapNav('L')"></div>
             <div class="tapC" onclick="toggleImmersive()"></div>
-            <div class="tapR" onclick="flip(-1)"></div>
+            <div class="tapR" onclick="tapNav('R')"></div>
             <div class="pg" id="pg"></div>
             <div class="leaflayer" id="leaflayer"></div>
             <div class="xraylayer" id="xraylayer"></div>
@@ -668,7 +679,7 @@
 
       <!-- BOTTOM NAV -->
       <div class="nav" id="nav">
-        <div class="navbrand"><span class="mark">◳</span> MangaHub</div>
+        <div class="navbrand"><svg class="blogo" viewBox="0 0 511.34 511.34"><use href="#shinnart"/></svg><span class="bwrap">MangaHub<small>by Shinnart</small></span></div>
         <button class="on" data-v="home" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/></svg>Home</button>
         <button data-v="browse" onclick="go('browse')"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>Browse</button>
         <button data-v="library" onclick="go('library')"><svg viewBox="0 0 24 24"><path d="M4 4h12a2 2 0 0 1 2 2v15l-8-4-8 4V6a2 2 0 0 1 2-2z"/></svg>Library</button>
@@ -697,7 +708,7 @@
       <!-- CREATOR STUDIO (mangaka) -->
       <div class="studio" id="studio">
         <nav class="snav" id="snav">
-          <div class="snav-brand"><span class="mark">◳</span> MangaHub <span class="st">STUDIO</span></div>
+          <div class="snav-brand"><svg class="blogo" viewBox="0 0 511.34 511.34"><use href="#shinnart"/></svg> MangaHub <span class="st">STUDIO</span></div>
           <button class="on" data-s="dash" onclick="goStudio('dash')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</button>
           <button data-s="upload" onclick="goStudio('upload')"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0 4 4m-4-4-4 4M5 18v1a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1"/></svg>Upload</button>
           <button data-s="xray" onclick="goStudio('xray')"><svg viewBox="0 0 24 24"><path d="m12 2 2.2 5.8L20 10l-5.8 2.2L12 18l-2.2-5.8L4 10l5.8-2.2z"/></svg>X-Ray</button>
@@ -856,12 +867,17 @@ function pageMedia(o, n, total){   // one page's visual (image or generated), no
 function mangaPage(o, n, total){   // single page centered on black
   return `<div class="pgwrap">${pageMedia(o,n,total)}</div>`;
 }
-function mangaSpread(o, n, total){ // two-page spread (RTL: right page = n, read first; left page = n+1)
-  const leftN=n+1, hasLeft=leftN<=total;
-  return `<div class="spread">
-    <div class="scell left">${hasLeft?pageMedia(o,leftN,total):''}</div>
-    <div class="scell right">${pageMedia(o,n,total)}</div>
-  </div>`;
+function mangaSpread(o, n, total){ // two-page spread; RTL: current page on right. LTR: current page on left.
+  const a=pageMedia(o,n,total);
+  const b=(n+1<=total)?pageMedia(o,n+1,total):'';
+  const leftC = o.ltr ? a : b;   // LTR: current(n) left, next(n+1) right
+  const rightC= o.ltr ? b : a;   // RTL: next(n+1) left, current(n) right
+  return `<div class="spread"><div class="scell left">${leftC}</div><div class="scell right">${rightC}</div></div>`;
+}
+function tapNav(side){ // RTL: tap LEFT advances. LTR: tap RIGHT advances.
+  const ltr = cur.o && cur.o.ltr;
+  const advance = (side==='L') ? !ltr : !!ltr;
+  flip(advance?1:-1);
 }
 function fitsSpread(){ return window.innerWidth>=720 && (window.innerWidth/window.innerHeight)>=1.2; }
 function isSpread(){ return cur.view==='book' && fitsSpread(); }
@@ -1014,6 +1030,7 @@ function renderPage(){
   const end=Math.min(cur.page+1, cur.total);
   document.getElementById('r-pn').textContent = sp ? (cur.page+'–'+end+' / '+cur.total) : (cur.page+' / '+cur.total);
   document.getElementById('r-range').value = cur.page;
+  document.getElementById('scrubwrap').style.direction = (cur.o&&cur.o.ltr)?'ltr':'rtl';
   applyXray();
 }
 function renderWebtoon(o){
@@ -1054,11 +1071,12 @@ function flip(dir){ // RTL: tapping LEFT advances
   const np=Math.min(cur.total,Math.max(1,cur.page+dir*step));
   if(np===cur.page)return;
   if(cur.view==='book' && !isSpread()){               // single-page book: animate a turning leaf
+    const ltr=!!(cur.o&&cur.o.ltr), bindRight = dir>0 ? !ltr : ltr;   // which edge the page binds on
     const layer=document.getElementById('leaflayer');
-    layer.innerHTML=`<div class="leaf" style="transform-origin:${dir>0?'right center':'left center'}">${document.getElementById('pg').innerHTML}</div>`;
+    layer.innerHTML=`<div class="leaf" style="transform-origin:${bindRight?'right':'left'} center">${document.getElementById('pg').innerHTML}</div>`;
     const el=layer.firstElementChild;
     cur.page=np; renderPage();
-    requestAnimationFrame(()=>{ el.classList.add('go'); el.style.transform=`rotateY(${dir>0?-168:168}deg)`; });
+    requestAnimationFrame(()=>{ el.classList.add('go'); el.style.transform=`rotateY(${bindRight?-168:168}deg)`; });
     setTimeout(()=>{ layer.innerHTML=''; },600);
   } else { cur.page=np; renderPage(); }                // page mode + two-page spread: fade
 }
@@ -1153,10 +1171,10 @@ function toast(msg){ const t=document.getElementById('toast'); document.getEleme
 /* ---------- init ---------- */
 /* ===== Creator Studio (mangaka) ===== */
 const STUDIO={
-  name:'Aoi Tanaka', init:'A',
+  name:'Shinnart', init:'S',
   kpi:[{l:'This month',v:'$1,248',d:'+18%'},{l:'Reads (30d)',v:'84.2k',d:'+12%'},{l:'New followers',v:'+312',d:'+5%'},{l:'Tips (30d)',v:'$96',d:'+22%'}],
   series:[
-    {t:'Lunar Vanguard',fmt:'manhwa',ch:42,reads:'61.3k',status:'pub',g:G[0],motif:'🌙',drafts:3},
+    {t:'La Vida del TO',fmt:'manga',ch:1,reads:'2.1k',status:'pub',g:['#231f20','#5b5b8c'],motif:'📖',drafts:3},
     {t:'Tide & Ember',fmt:'manga',ch:21,reads:'18.7k',status:'pub',g:G[3],motif:'🔥',drafts:0},
     {t:'Untitled · Ep. 5',fmt:'manhwa',ch:5,reads:'—',status:'draft',g:G[6],motif:'✍️',drafts:0},
   ],
@@ -1244,8 +1262,9 @@ if('serviceWorker' in navigator){
 }
 </script>
 <script>
-TITLES.unshift({id:999,t:'Pepper & Carrot',a:'David Revoy',fmt:'manhwa',g:['#2e9e8f','#7c5cff'],rate:'4.9',tags:['Fantasy','Comedy','All-ages','CC-BY'],motif:'🧪',ch:40,read:0,prog:0,cover:'pepper/cover.jpg',syn:'Pepper, a young witch of Chaosah, brews potions with her cat Carrot. A free/libre webcomic by David Revoy, licensed CC-BY 4.0 (peppercarrot.com).',pages:['pepper/001.jpg','pepper/002.jpg','pepper/003.jpg','pepper/004.jpg','pepper/005.jpg','pepper/006.jpg','pepper/007.jpg','pepper/008.jpg','pepper/009.jpg']});
-TITLES.forEach((t,i)=>t.id=i);
+TITLES.unshift({id:997,t:'Pepper & Carrot',a:'David Revoy',fmt:'manhwa',g:['#2e9e8f','#7c5cff'],rate:'4.9',tags:['Fantasy','Comedy','CC-BY'],motif:'🧪',ch:40,read:0,prog:0,cover:'pepper/cover.jpg',syn:'Pepper, a young witch of Chaosah, brews potions with her cat Carrot. A free/libre webcomic by David Revoy, CC-BY 4.0 (peppercarrot.com).',pages:['pepper/001.jpg','pepper/002.jpg','pepper/003.jpg','pepper/004.jpg','pepper/005.jpg','pepper/006.jpg','pepper/007.jpg','pepper/008.jpg','pepper/009.jpg']});
+TITLES.unshift({id:998,t:'La Vida del TO',a:'Shinnart',fmt:'manga',ltr:true,g:['#231f20','#5b5b8c'],rate:'5.0',tags:['Original','Shinnart','Slice of life'],motif:'📖',ch:1,read:0,prog:0,cover:'vidato/cover.jpg',syn:'Manga original de Shinnart. Tomo 1: portada, capitulo 1 y contratapa. Publicado directo por el autor en MangaHub.',pages:[]});
+TITLES.forEach(function(t,i){t.id=i;});
 renderHome();renderBrowse();renderLibrary();
 </script>
 </body>

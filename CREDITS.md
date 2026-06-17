@@ -1,9 +1,7 @@
 # Credits
 
-This is an interactive **prototype/mock** of a manga/manhwa reader concept. UI placeholder
-art is generated procedurally. The sample read uses legally-shareable content:
+- **La Vida del TO** — © Shinnart (the author). Published with permission as the creator's own work.
+- **Pepper & Carrot** — by David Revoy — https://www.peppercarrot.com — CC-BY 4.0 (pages in `/pepper/`).
+- **Shinnart logo** — © Shinnart, used for first-party branding.
 
-- **Pepper & Carrot** — by **David Revoy** — https://www.peppercarrot.com —
-  licensed **CC-BY 4.0**. Pages included in `/pepper/` per the license, with attribution.
-
-No copyrighted/commercial manga is included in this repository.
+No third-party copyrighted manga is included in this repository.
