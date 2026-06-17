@@ -1,5 +1,7 @@
-/* MangaHub mock — offline-capable service worker (cache-first app shell) */
-const CACHE = 'mangahub-mock-v1';
+/* MangaHub mock — service worker.
+   HTML/navigation = network-first (always get the latest app shell when online).
+   Static assets (images/icons/manifest) = cache-first for speed + offline. */
+const CACHE = 'mangahub-mock-v7';
 const ASSETS = [
   './', './index.html', './manifest.webmanifest',
   './icon-180.png', './icon-192.png', './icon-512.png'
@@ -20,13 +22,22 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
+  const isHTML = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
+
+  if (isHTML) {
+    // network-first: latest home shows immediately when online, cached copy as offline fallback
+    e.respondWith(
+      fetch(req)
+        .then((res) => { const c = res.clone(); caches.open(CACHE).then((ca) => ca.put('./index.html', c)).catch(() => {}); return res; })
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // cache-first for static assets (pages, covers, icons)
   e.respondWith(
     caches.match(req).then((hit) =>
-      hit || fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
-        return res;
-      }).catch(() => caches.match('./index.html'))
+      hit || fetch(req).then((res) => { const c = res.clone(); caches.open(CACHE).then((ca) => ca.put(req, c)).catch(() => {}); return res; })
     )
   );
 });
