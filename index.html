@@ -920,17 +920,19 @@ function renderHome(){
   const cont = TITLES.filter(o=>o.prog>0&&o.prog<1);
   document.getElementById('home-content').innerHTML = `
     <div class="hero" onclick="openDetail(${hero.id})">
-      <div class="art" style="background:linear-gradient(135deg,${hero.g[0]},${hero.g[1]})">
+      ${hero.cover
+        ? `<div class="art" style="background:#000"><img src="${hero.cover}" style="width:100%;height:100%;object-fit:cover;object-position:center 18%" alt=""></div>`
+        : `<div class="art" style="background:linear-gradient(135deg,${hero.g[0]},${hero.g[1]})">
         <div style="position:absolute;inset:0;background:radial-gradient(200px 200px at 80% 20%,rgba(255,255,255,.3),transparent)"></div>
         <div style="position:absolute;top:24px;right:26px;font-size:64px;opacity:.9;filter:drop-shadow(0 8px 20px rgba(0,0,0,.4))">${hero.motif}</div>
-      </div>
+      </div>`}
       <div class="scrim"></div>
       <div class="meta">
         <span class="badge">◆ Featured original</span>
         <h3>${hero.t}</h3>
         <div class="sub">${hero.a} · ★ ${hero.rate} · ${hero.tags.join(' · ')}</div>
         <div class="cta">
-          <button class="btn primary" onclick="event.stopPropagation();openReader(${hero.id})">▶ Continue · Ch ${hero.read}</button>
+          <button class="btn primary" onclick="event.stopPropagation();openReader(${hero.id})">▶ ${hero.read>0?'Continue · Ch '+hero.read:'Read'}</button>
           <button class="btn glass" onclick="event.stopPropagation();openDetail(${hero.id})">Details</button>
         </div>
       </div>
