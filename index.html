@@ -367,6 +367,112 @@
     .scrim-bg{align-items:center;justify-content:center}
     .sheet{max-width:460px;border-radius:24px;border:1px solid var(--border);animation:fade .2s}
   }
+
+  /* ===== Creator Studio (mangaka) ===== */
+  .studio{position:absolute;inset:0;z-index:95;background:var(--bg);display:none}
+  .studio.open{display:block}
+  .snav{position:absolute;left:0;right:0;bottom:0;height:64px;z-index:10;display:flex;background:var(--surface);border-top:1px solid var(--border);padding:6px}
+  .snav button[data-s]{flex:1;background:none;border:none;color:var(--faint);font-size:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer}
+  .snav button[data-s].on{color:var(--accent)}
+  .snav button[data-s] svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.9}
+  .snav .snav-brand,.snav .snav-exit{display:none}
+  .smain{position:absolute;inset:0 0 64px 0;overflow-y:auto;scrollbar-width:none}
+  .smain::-webkit-scrollbar{display:none}
+  .sview{display:none;padding:18px 16px 34px}
+  .sview.on{display:block}
+  .stop{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+  .stop .sback{flex:0 0 auto}
+  .stop .sti{flex:1;min-width:0}
+  .stop h2{font-size:23px;font-weight:800;letter-spacing:-.5px}
+  .stop .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .savatar{width:40px;height:40px;border-radius:50%;background:var(--grad);display:grid;place-items:center;font-weight:800;flex:0 0 auto}
+  .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+  .kpi{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:14px}
+  .kpi .l{font-size:11px;color:var(--muted);font-weight:600}
+  .kpi .v{font-size:23px;font-weight:800;letter-spacing:-.5px;margin-top:5px}
+  .kpi .d{font-size:11px;font-weight:700;margin-top:3px;color:var(--green)}
+  .sblock{margin-top:22px}
+  .sblock>h4{font-size:15px;font-weight:800;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between}
+  .sblock>h4 a{font-size:12px;color:var(--accent);cursor:pointer;font-weight:600}
+  .srow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:11px;margin-bottom:10px;cursor:pointer;transition:.15s}
+  .srow:active{transform:scale(.99)}
+  .srow .sc{width:44px;height:60px;border-radius:9px;flex:0 0 auto;display:grid;place-items:center;font-size:22px}
+  .srow .si{flex:1;min-width:0}
+  .srow .si .sn{font-size:14px;font-weight:700}
+  .srow .si .sm{font-size:11.5px;color:var(--muted);margin-top:3px}
+  .badge2{font-size:9.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;padding:3px 8px;border-radius:6px}
+  .badge2.pub{background:rgba(61,220,151,.16);color:#8ff0c4;border:1px solid rgba(61,220,151,.35)}
+  .badge2.draft{background:var(--surface-3);color:var(--muted)}
+  .draftpill{font-size:10px;font-weight:800;color:#cbbcff;background:rgba(124,92,255,.16);border:1px solid rgba(124,92,255,.4);padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .qacts{display:flex;gap:10px;margin-top:4px}
+  .qacts .btn{flex:1}
+  .dropz{border:2px dashed var(--border-2);border-radius:16px;padding:32px 18px;text-align:center;color:var(--muted);background:var(--surface);cursor:pointer}
+  .dropz .ic{font-size:32px;margin-bottom:8px}
+  .dropz b{color:var(--text);display:block;font-size:14px;margin-bottom:4px}
+  .frow{display:flex;gap:10px;margin-top:13px}
+  .field{flex:1}
+  .field>label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:6px}
+  .ctrl{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 12px;font-size:13px;color:var(--text);width:100%}
+  .seg2{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:3px}
+  .seg2 button{flex:1;background:none;border:none;color:var(--muted);font-size:12px;font-weight:700;padding:9px;border-radius:7px;cursor:pointer}
+  .seg2 button.on{background:var(--surface-3);color:var(--text)}
+  .pipe{margin-top:16px;background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:8px 16px}
+  .pstep{display:flex;align-items:center;gap:12px;padding:11px 0;font-size:13px;color:var(--faint);border-bottom:1px solid var(--border)}
+  .pstep:last-child{border-bottom:none}
+  .pstep .pd{width:22px;height:22px;border-radius:50%;border:2px solid var(--surface-3);display:grid;place-items:center;flex:0 0 auto;font-size:11px}
+  .pstep.done{color:var(--text)}
+  .pstep.done .pd{background:var(--green);border-color:var(--green);color:#06281c}
+  .pstep.active{color:var(--text)}
+  .pstep.active .pd{border-color:var(--accent);border-right-color:transparent;animation:spin .7s linear infinite}
+  .pstep .px{margin-left:auto;font-size:10px;font-weight:800;color:#cbbcff}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .aibanner{background:linear-gradient(135deg,rgba(124,92,255,.18),rgba(255,77,141,.1));border:1px solid rgba(124,92,255,.4);border-radius:14px;padding:13px 14px;display:flex;gap:12px;align-items:flex-start;margin-bottom:16px}
+  .aibanner .ai-ic{font-size:22px;flex:0 0 auto}
+  .aibanner .t{font-size:13px;font-weight:700}
+  .aibanner .s{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
+  .xcard{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:14px;margin-bottom:12px;transition:.2s}
+  .xcard.approved{border-color:rgba(61,220,151,.45)}
+  .xcard .xh{display:flex;align-items:center;gap:11px;margin-bottom:6px}
+  .xcard .xa{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;font-weight:800;color:#fff;flex:0 0 auto}
+  .xcard .xn{font-size:15px;font-weight:800}
+  .xcard .xr{font-size:11.5px;color:var(--muted)}
+  .aichip{margin-left:auto;font-size:9.5px;font-weight:800;color:#cbbcff;background:rgba(124,92,255,.16);border:1px solid rgba(124,92,255,.4);padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .aichip.ok{color:#8ff0c4;background:rgba(61,220,151,.16);border-color:rgba(61,220,151,.4)}
+  .xfield{margin-top:10px}
+  .xfield>label{font-size:10px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;color:var(--faint)}
+  .xfield .v{font-size:13px;color:#d4d4de;margin-top:5px;line-height:1.5;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:9px 11px}
+  .spoil{display:flex;align-items:center;gap:10px;margin-top:12px;font-size:11.5px;color:var(--muted)}
+  .spoil input{flex:1;accent-color:var(--accent)}
+  .xbtns{display:flex;gap:9px;margin-top:13px}
+  .bignum{font-size:40px;font-weight:800;letter-spacing:-1.5px}
+  .bigsub{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .earnbars{margin-top:18px;display:grid;gap:14px}
+  .eb .ebl{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px;color:#d4d4de}
+  .eb .ebl b{font-weight:700;color:var(--text)}
+  .eb .track{height:9px;background:var(--surface-2);border-radius:999px;overflow:hidden}
+  .eb .track i{display:block;height:100%;border-radius:999px}
+  .payout{margin-top:20px;background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:14px;display:flex;align-items:center;gap:12px;font-size:13px}
+  .payout .pdot{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+  .fair{margin-top:16px;background:linear-gradient(135deg,rgba(61,220,151,.1),transparent);border:1px solid rgba(61,220,151,.3);border-radius:15px;padding:15px}
+  .fair h4{font-size:13px;font-weight:800;margin-bottom:4px}
+  .fair ul{list-style:none;display:grid;gap:9px;margin-top:10px}
+  .fair li{display:flex;gap:9px;font-size:12.5px;color:#d4d4de;align-items:center}
+  .fair li svg{width:16px;height:16px;color:var(--green);flex:0 0 auto;stroke-width:3}
+  @media(min-width:860px){
+    .snav{top:0;bottom:auto;left:0;right:auto;width:242px;height:100%;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:4px;padding:20px 14px;border-top:none;border-right:1px solid var(--border)}
+    .snav .snav-brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;padding:4px 10px 14px;color:var(--text)}
+    .snav .snav-brand .mark{width:28px;height:28px;border-radius:8px;background:var(--grad);display:grid;place-items:center;font-size:14px;color:#fff}
+    .snav .snav-brand .st{font-size:10px;color:var(--accent);font-weight:800;letter-spacing:.6px;border:1px solid rgba(124,92,255,.4);padding:2px 6px;border-radius:5px}
+    .snav button[data-s]{flex:0 0 auto;flex-direction:row;justify-content:flex-start;gap:12px;width:100%;padding:11px 13px;border-radius:11px;font-size:14px;color:var(--muted)}
+    .snav button[data-s].on{background:var(--surface-2);color:var(--text)}
+    .snav button[data-s].on svg{stroke:var(--accent)}
+    .snav .snav-exit{display:block;margin-top:auto}
+    .snav .snav-exit button{width:100%;text-align:left;background:none;border:1px solid var(--border);color:var(--muted);font-size:13px;font-weight:600;padding:11px 13px;border-radius:11px;cursor:pointer}
+    .smain{inset:0 0 0 242px}
+    .sview{max-width:1000px;margin:0 auto;padding:26px 30px 44px}
+    .stop .sback{display:none}
+    .kpis{grid-template-columns:repeat(4,1fr)}
+  }
 </style>
 </head>
 <body>
@@ -486,7 +592,7 @@
             <div class="mi" onclick="go('premium')"><svg viewBox="0 0 24 24"><path d="m12 2 3 6 6 .9-4.5 4.3 1 6L12 17l-5.5 2.2 1-6L3 8.9 9 8z"/></svg> Upgrade to Premium <span class="ch">›</span></div>
             <div class="mi"><svg viewBox="0 0 24 24"><path d="M12 8v8m-4-4h8"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg> Install app (Add to Home Screen) <span class="ch">›</span></div>
             <div class="mi"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Comments &amp; community <span class="ch" style="font-size:9px;color:var(--accent)">SOON</span></div>
-            <div class="mi"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H5.2L4 17.2z"/></svg> Become a creator <span class="ch" style="font-size:9px;color:var(--accent)">SOON</span></div>
+            <div class="mi" onclick="enterStudio()"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H5.2L4 17.2z"/></svg> Creator Studio <span class="ch">›</span></div>
             <div class="mi"><span style="color:var(--muted)">Show ads (free tier)</span><div class="tog on" id="adtog" onclick="event.stopPropagation();toggleAds(this)"><i></i></div></div>
           </div>
         </div>
@@ -573,6 +679,24 @@
           </div>
           <button class="btn gold block" onclick="goPremium()">Start free trial → Premium</button>
           <div class="alt" onclick="closeWall()">Keep reading free in standard</div>
+        </div>
+      </div>
+
+      <!-- CREATOR STUDIO (mangaka) -->
+      <div class="studio" id="studio">
+        <nav class="snav" id="snav">
+          <div class="snav-brand"><span class="mark">◳</span> MangaHub <span class="st">STUDIO</span></div>
+          <button class="on" data-s="dash" onclick="goStudio('dash')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</button>
+          <button data-s="upload" onclick="goStudio('upload')"><svg viewBox="0 0 24 24"><path d="M12 16V4m0 0 4 4m-4-4-4 4M5 18v1a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1"/></svg>Upload</button>
+          <button data-s="xray" onclick="goStudio('xray')"><svg viewBox="0 0 24 24"><path d="m12 2 2.2 5.8L20 10l-5.8 2.2L12 18l-2.2-5.8L4 10l5.8-2.2z"/></svg>X-Ray</button>
+          <button data-s="earn" onclick="goStudio('earn')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5a2.5 2 0 0 1 5 0c0 2.5-5 1-5 4a2.5 2 0 0 0 5 0"/></svg>Earnings</button>
+          <div class="snav-exit"><button onclick="exitStudio()">← Back to reading</button></div>
+        </nav>
+        <div class="smain" id="smain">
+          <div class="sview on" id="sv-dash"></div>
+          <div class="sview" id="sv-upload"></div>
+          <div class="sview" id="sv-xray"></div>
+          <div class="sview" id="sv-earn"></div>
         </div>
       </div>
 
@@ -998,6 +1122,91 @@ let toastT;
 function toast(msg){ const t=document.getElementById('toast'); document.getElementById('toast-msg').textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),1900); }
 
 /* ---------- init ---------- */
+/* ===== Creator Studio (mangaka) ===== */
+const STUDIO={
+  name:'Aoi Tanaka', init:'A',
+  kpi:[{l:'This month',v:'$1,248',d:'+18%'},{l:'Reads (30d)',v:'84.2k',d:'+12%'},{l:'New followers',v:'+312',d:'+5%'},{l:'Tips (30d)',v:'$96',d:'+22%'}],
+  series:[
+    {t:'Lunar Vanguard',fmt:'manhwa',ch:42,reads:'61.3k',status:'pub',g:G[0],motif:'🌙',drafts:3},
+    {t:'Tide & Ember',fmt:'manga',ch:21,reads:'18.7k',status:'pub',g:G[3],motif:'🔥',drafts:0},
+    {t:'Untitled · Ep. 5',fmt:'manhwa',ch:5,reads:'—',status:'draft',g:G[6],motif:'✍️',drafts:0},
+  ],
+  earn:[{label:'Subscription pool · by pages read',v:720,pct:58,c:'var(--accent)'},{label:'Buy-to-own sales',v:380,pct:30,c:'var(--green)'},{label:'Tips from readers',v:148,pct:12,c:'var(--gold)'}],
+};
+function enterStudio(){ document.getElementById('studio').classList.add('open'); goStudio('dash'); }
+function exitStudio(){ document.getElementById('studio').classList.remove('open'); }
+function goStudio(s){
+  document.querySelectorAll('#snav button[data-s]').forEach(b=>b.classList.toggle('on',b.dataset.s===s));
+  document.querySelectorAll('.sview').forEach(v=>v.classList.toggle('on', v.id==='sv-'+s));
+  ({dash:renderSDash,upload:renderSUpload,xray:renderSXray,earn:renderSEarn}[s]||function(){})();
+  document.getElementById('smain').scrollTop=0;
+}
+function sTop(title,sub){
+  return `<div class="stop"><button class="sback iconbtn" onclick="exitStudio()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg></button>
+    <div class="sti"><h2>${title}</h2>${sub?`<div class="sub">${sub}</div>`:''}</div><div class="savatar">${STUDIO.init}</div></div>`;
+}
+function renderSDash(){
+  const k=STUDIO.kpi.map(x=>`<div class="kpi"><div class="l">${x.l}</div><div class="v">${x.v}</div><div class="d">▲ ${x.d}</div></div>`).join('');
+  const series=STUDIO.series.map(s=>`<div class="srow" onclick="goStudio('xray')">
+      <div class="sc" style="background:linear-gradient(150deg,${s.g[0]},${s.g[1]})">${s.motif}</div>
+      <div class="si"><div class="sn">${s.t}</div><div class="sm">${s.fmt} · ${s.ch} ch · ${s.reads} reads</div></div>
+      ${s.drafts?`<span class="draftpill">✦ ${s.drafts} X-Ray drafts</span>`:`<span class="badge2 ${s.status}">${s.status==='pub'?'Published':'Draft'}</span>`}</div>`).join('');
+  document.getElementById('sv-dash').innerHTML = sTop('Creator Studio','Welcome back, '+STUDIO.name)+
+    `<div class="kpis">${k}</div>
+     <div class="sblock"><h4>Quick actions</h4><div class="qacts"><button class="btn primary" onclick="goStudio('upload')">＋ New chapter</button><button class="btn glass" onclick="goStudio('xray')">✦ Review X-Ray drafts</button></div></div>
+     <div class="sblock"><h4>Your series <a onclick="toast('Demo')">Manage</a></h4>${series}</div>`;
+}
+function renderSUpload(){
+  document.getElementById('sv-upload').innerHTML = sTop('Upload a chapter','Pages in → processed → live')+
+    `<div class="dropz" onclick="toast('Demo · drag your pages here')"><div class="ic">⬆️</div><b>Drag your chapter pages here</b>PNG / JPG / PSD · or click to browse</div>
+     <div class="frow"><div class="field"><label>Series</label><select class="ctrl"><option>Lunar Vanguard</option><option>Tide &amp; Ember</option><option>+ New series…</option></select></div><div class="field"><label>Chapter #</label><input class="ctrl" value="43"></div></div>
+     <div class="frow"><div class="field"><label>Format</label><div class="seg2"><button class="on">Manhwa · scroll</button><button>Manga · RTL</button></div></div></div>
+     <div class="frow"><div class="field"><label>Access</label><div class="seg2"><button class="on">Free + quality wall</button><button>Premium early-access</button></div></div></div>
+     <button class="btn primary block" style="margin-top:16px" onclick="runPipeline()">Start processing</button><div id="pipe-wrap"></div>`;
+}
+const PSTEPS=[{t:'Uploading pages',x:''},{t:'Encoding · Standard + HD (AVIF / WebP)',x:''},{t:'Slicing the webtoon strip',x:''},{t:'Packaging EPUB3 + CBZ',x:'PREMIUM'},{t:'Drafting X-Ray · OCR + AI',x:'✨ AI'},{t:'Live · readers notified',x:''}];
+function runPipeline(){
+  const w=document.getElementById('pipe-wrap');
+  w.innerHTML=`<div class="pipe">${PSTEPS.map((s,i)=>`<div class="pstep" id="ps${i}"><div class="pd"></div><span>${s.t}</span>${s.x?`<span class="px">${s.x}</span>`:''}</div>`).join('')}</div>`;
+  let i=0;
+  (function tick(){
+    if(i>0){const p=document.getElementById('ps'+(i-1));p.classList.remove('active');p.classList.add('done');p.querySelector('.pd').textContent='✓';}
+    if(i<PSTEPS.length){const c=document.getElementById('ps'+i);c.classList.add('active');const ai=(i===4);i++;setTimeout(tick, ai?1400:850);}
+    else toast('Chapter is live ✓','dot');
+  })();
+}
+function renderSXray(){
+  const cards=CAST.map(c=>`<div class="xcard" id="xc-${c.id}">
+     <div class="xh"><div class="xa" style="background:linear-gradient(135deg,${c.hue},rgba(255,255,255,.2))">${c.init}</div><div><div class="xn">${c.name}</div><div class="xr">${c.role}</div></div><span class="aichip" id="chip-${c.id}">✨ AI draft</span></div>
+     <div class="xfield"><label>Bio (spoiler-safe)</label><div class="v">${c.bio}</div></div>
+     <div class="xfield"><label>Relationships</label><div class="v">${c.rel}</div></div>
+     <div class="spoil">🔒 Reveal up to chapter <input type="range" min="1" max="42" value="3"><b id="rv-${c.id}">3</b></div>
+     <div class="xbtns"><button class="btn primary sm" style="flex:1" onclick="approveX('${c.id}')">✓ Approve</button><button class="btn glass sm" onclick="toast('Demo · edit fields')">Edit</button></div></div>`).join('');
+  const gloss=GLOSSARY.map(g=>`<div class="xcard"><div class="xh"><div class="xn" style="font-size:14px">${g.t}</div><span class="aichip">✨ AI draft</span></div><div class="xfield"><div class="v">${g.d}</div></div></div>`).join('');
+  document.getElementById('sv-xray').innerHTML = sTop('X-Ray Studio','Lunar Vanguard · Chapter 42')+
+    `<div class="aibanner"><div class="ai-ic">✨</div><div><div class="t">AI draft ready — review &amp; approve</div><div class="s">We read this chapter (OCR of the dialogue + your series bible) and drafted the cast, relationships and glossary. <b style="color:#fff">You own the canon</b> — approve or edit. Each entry is spoiler-gated to the reader's progress.</div></div></div>
+     <div class="sblock"><h4>Cast <a onclick="toast('Demo · regenerate draft')">↻ Re-draft</a></h4>${cards}</div>
+     <div class="sblock"><h4>Glossary &amp; places</h4>${gloss}</div>`;
+  CAST.forEach(c=>{const xc=document.getElementById('xc-'+c.id);const r=xc.querySelector('input');const lab=document.getElementById('rv-'+c.id);r.oninput=function(){lab.textContent=r.value;};});
+}
+function approveX(id){
+  const card=document.getElementById('xc-'+id), chip=document.getElementById('chip-'+id);
+  card.classList.add('approved'); chip.classList.add('ok'); chip.textContent='✓ Approved'; toast('Approved — live for readers','dot');
+}
+function renderSEarn(){
+  const bars=STUDIO.earn.map(e=>`<div class="eb"><div class="ebl"><span>${e.label}</span><b>$${e.v}</b></div><div class="track"><i style="width:${e.pct}%;background:${e.c}"></i></div></div>`).join('');
+  const chk='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="m5 12 5 5L20 7"/></svg>';
+  document.getElementById('sv-earn').innerHTML = sTop('Earnings','This month so far')+
+    `<div class="bignum">$1,248</div><div class="bigsub">Across 3 series · 84.2k reads · paid out monthly</div>
+     <div class="sblock"><h4>Where it comes from</h4><div class="earnbars">${bars}</div></div>
+     <div class="payout"><span class="pdot"></span><div><b>Stripe Connect · connected</b><div style="font-size:11.5px;color:var(--muted);margin-top:2px">Next payout Jul 1 · $1,248</div></div><button class="btn glass sm" style="margin-left:auto" onclick="toast('Demo')">Manage</button></div>
+     <div class="fair"><h4>How MangaHub treats creators</h4><ul>
+       <li>${chk}You keep <b style="color:#fff">100% of your IP</b> — no rights grab</li>
+       <li>${chk}<b style="color:#fff">No NDA</b> on your earnings — compare freely</li>
+       <li>${chk}Transparent <b style="color:#fff">70% split</b>, weighted by who actually reads you</li>
+       <li>${chk}See exactly <b style="color:#fff">who reads you</b> — your audience is yours</li></ul></div>`;
+}
+
 renderHome(); renderBrowse(); renderLibrary();
 
 /* PWA: register the service worker for offline + installability */
@@ -1006,7 +1215,7 @@ if('serviceWorker' in navigator){
 }
 </script>
 <script>
-TITLES.unshift({id:999,t:'Pepper & Carrot',a:'David Revoy',fmt:'manhwa',g:['#2e9e8f','#7c5cff'],rate:'4.9',tags:['Fantasy','Comedy','All-ages','CC-BY'],motif:'🧪',ch:40,read:0,prog:0,cover:'pepper/cover.jpg',syn:'Pepper, a young witch of Chaosah, brews potions with her cat Carrot. A free/libre webcomic by David Revoy, licensed CC-BY 4.0 (peppercarrot.com). Real pages, legally shareable.',pages:['pepper/001.jpg','pepper/002.jpg','pepper/003.jpg','pepper/004.jpg','pepper/005.jpg','pepper/006.jpg','pepper/007.jpg','pepper/008.jpg','pepper/009.jpg']});
+TITLES.unshift({id:999,t:'Pepper & Carrot',a:'David Revoy',fmt:'manhwa',g:['#2e9e8f','#7c5cff'],rate:'4.9',tags:['Fantasy','Comedy','All-ages','CC-BY'],motif:'🧪',ch:40,read:0,prog:0,cover:'pepper/cover.jpg',syn:'Pepper, a young witch of Chaosah, brews potions with her cat Carrot. A free/libre webcomic by David Revoy, licensed CC-BY 4.0 (peppercarrot.com).',pages:['pepper/001.jpg','pepper/002.jpg','pepper/003.jpg','pepper/004.jpg','pepper/005.jpg','pepper/006.jpg','pepper/007.jpg','pepper/008.jpg','pepper/009.jpg']});
 TITLES.forEach((t,i)=>t.id=i);
 renderHome();renderBrowse();renderLibrary();
 </script>
