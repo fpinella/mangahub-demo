@@ -351,6 +351,62 @@
   .xlist .gi b{font-size:13px;font-weight:800;display:block;margin-bottom:3px}
   .xlist .gi span{font-size:12.5px;color:var(--muted);line-height:1.5}
 
+  /* ===== Community layer: hybrid tags, per-chapter comments, badges (brainstorm w/ Mike) ===== */
+  .community{margin-top:26px;display:grid;gap:26px}
+  .cm-sec .cm-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+  .cm-sec .cm-head h4{font-size:16.5px;font-weight:800;letter-spacing:-.3px}
+  .cm-sec .cm-head a{font-size:12.5px;color:var(--accent);font-weight:700;cursor:pointer}
+  .cm-note{font-size:11.5px;color:var(--faint);margin-top:11px;line-height:1.5}
+  .cm-note b{color:var(--muted)}
+  .seal{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;color:#8ff0c4;background:rgba(61,220,151,.12);border:1px solid rgba(61,220,151,.4);padding:6px 12px;border-radius:999px;margin-bottom:12px}
+  .seal b{color:#fff;font-weight:800}
+  .ctag-row{display:flex;flex-wrap:wrap;gap:8px}
+  .ctag{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--text);background:var(--surface-2);border:1px solid var(--border);padding:7px 12px;border-radius:999px;cursor:pointer;transition:.15s}
+  .ctag i{font-style:normal;font-size:11px;font-weight:800;color:var(--muted)}
+  .ctag.mine{background:rgba(124,92,255,.16);border-color:rgba(124,92,255,.5);color:#cbbcff}
+  .ctag.mine i{color:#cbbcff}
+  .ctag.add{color:var(--muted);border-style:dashed}
+  .ctag:active{transform:scale(.95)}
+  .cm-auth{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:13px}
+  .cm-auth span{font-size:11.5px;color:var(--muted);background:var(--surface-2);border:1px solid var(--border);padding:5px 11px;border-radius:999px}
+  .cm-auth .lbl{background:none;border:none;color:var(--faint);font-weight:800;letter-spacing:.3px;text-transform:uppercase;font-size:10px;padding:5px 0;align-self:center}
+
+  .cmt-chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none}
+  .cmt-chips::-webkit-scrollbar{display:none}
+  .cmt-chip{flex:0 0 auto;font-size:12px;font-weight:700;padding:7px 13px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);color:var(--muted);cursor:pointer}
+  .cmt-chip.on{background:var(--text);color:#0a0a10;border-color:var(--text)}
+  .cmt-veil{background:var(--surface);border:1px dashed var(--border-2);border-radius:14px;padding:26px 18px;text-align:center;color:var(--muted);font-size:13.5px;font-weight:700;display:flex;flex-direction:column;gap:7px}
+  .cmt-veil span{font-size:12px;font-weight:500;color:var(--faint);line-height:1.5}
+  .cmt-box{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .cmt-input{flex:1;min-width:0;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:11px 13px;font-size:13px;color:var(--text)}
+  .cmt-send{flex:0 0 auto;background:var(--grad);border:none;color:#fff;font-weight:700;font-size:12.5px;padding:11px 14px;border-radius:11px;cursor:pointer}
+  .cmt{display:flex;gap:11px;padding:14px 0;border-top:1px solid var(--border)}
+  .cmt:first-of-type{border-top:none;margin-top:8px}
+  .cmt-av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;color:#fff;flex:0 0 auto}
+  .cmt-av.me{background:var(--grad)}
+  .cmt-main{flex:1;min-width:0}
+  .cmt-u{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .ubadge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:999px;border:1px solid;background:rgba(255,255,255,.04)}
+  .cmt-tx{font-size:13px;color:#d4d4de;line-height:1.5;margin-top:4px}
+  .cmt-acts{display:flex;gap:18px;margin-top:8px}
+  .cmt-acts button{background:none;border:none;color:var(--muted);font-size:11.5px;font-weight:700;cursor:pointer;padding:0}
+  .cmt-acts button.on{color:var(--accent-2)}
+
+  /* webtoon page separators (Mike: subtle gap so panels/pages read cleaner) */
+  .webtoon .wsep{height:11px;background:#0c0c0e;position:relative}
+  .webtoon .wsep::after{content:'';position:absolute;left:16%;right:16%;top:50%;height:1px;background:rgba(255,255,255,.06)}
+
+  /* profile: gamification badges + top-contributor avatar frame */
+  .pav.framed{position:relative}
+  .pav.framed::before{content:'';position:absolute;inset:-5px;border-radius:50%;background:conic-gradient(from 0deg,#7c5cff,#ff4d8d,#ffcf6b,#3ddc97,#7c5cff);z-index:-1;animation:spin 6s linear infinite}
+  .pav.framed::after{content:'';position:absolute;inset:-2px;border-radius:50%;background:var(--bg);z-index:-1}
+  .badges{margin-top:18px}
+  .badges .bh{font-size:12px;font-weight:800;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+  .badges .bh span:last-child{font-size:11px;color:var(--faint);font-weight:600}
+  .badge-row{display:flex;gap:9px;flex-wrap:wrap}
+  .gbadge{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:800;padding:8px 12px;border-radius:12px;border:1px solid;background:var(--surface)}
+  .gbadge small{font-weight:600;color:var(--faint);font-size:10px}
+
   .hidden{display:none!important}
 
   /* ===== Responsive shell: a real app at all widths — no phone bezel ===== */
@@ -629,7 +685,7 @@
         <div class="topbar"><h2>Profile</h2></div>
         <div class="profile">
           <div class="pcard">
-            <div class="pav">A</div>
+            <div class="pav" id="prof-av">A</div>
             <div>
               <div class="pn">Akira</div>
               <div class="pp free" id="prof-plan">● Free plan</div>
@@ -638,12 +694,17 @@
           <div class="stats">
             <div class="stat"><b>12</b><span>In library</span></div>
             <div class="stat"><b>148</b><span>Chapters read</span></div>
+            <div class="stat"><b>96</b><span>Aportes</span></div>
             <div class="stat"><b>3</b><span>Creators tipped</span></div>
+          </div>
+          <div class="badges">
+            <div class="bh"><span>Tus insignias</span><span>por aportar a la comunidad</span></div>
+            <div class="badge-row" id="prof-badges"></div>
           </div>
           <div class="menu">
             <div class="mi" onclick="go('premium')"><svg viewBox="0 0 24 24"><path d="m12 2 3 6 6 .9-4.5 4.3 1 6L12 17l-5.5 2.2 1-6L3 8.9 9 8z"/></svg> Upgrade to Premium <span class="ch">›</span></div>
             <div class="mi"><svg viewBox="0 0 24 24"><path d="M12 8v8m-4-4h8"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg> Install app (Add to Home Screen) <span class="ch">›</span></div>
-            <div class="mi"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Comments &amp; community <span class="ch" style="font-size:9px;color:var(--accent)">SOON</span></div>
+            <div class="mi" onclick="openDetail(0)"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Comentarios &amp; comunidad <span class="ch" style="font-size:9px;color:var(--green)">LIVE</span></div>
             <div class="mi" onclick="enterStudio()"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H5.2L4 17.2z"/></svg> Creator Studio <span class="ch">›</span></div>
             <div class="mi"><span style="color:var(--muted)">Show ads (free tier)</span><div class="tog on" id="adtog" onclick="event.stopPropagation();toggleAds(this)"><i></i></div></div>
           </div>
@@ -756,6 +817,11 @@
       <!-- X-Ray sheet -->
       <div class="scrim-bg" id="xray" onclick="if(event.target===this)closeXray()">
         <div class="sheet" id="xray-sheet"></div>
+      </div>
+
+      <!-- community add-tag sheet -->
+      <div class="scrim-bg" id="tagsheet" onclick="if(event.target===this)closeTagSheet()">
+        <div class="sheet" id="tag-sheet-body"></div>
       </div>
 
       <!-- full-screen ad interstitial -->
@@ -987,7 +1053,12 @@ function renderBrowse(){
   document.getElementById('browse-chips').innerHTML = cats.map((c,i)=>`<div class="chip ${i===0?'on':''}" onclick="filterBrowse(this)">${c}</div>`).join('');
   document.getElementById('browse-grid').innerHTML = TITLES.map(o=>cardHTML(o)).join('');
 }
-function filterBrowse(el){ [...el.parentNode.children].forEach(c=>c.classList.remove('on')); el.classList.add('on'); }
+function filterBrowse(el){
+  [...el.parentNode.children].forEach(c=>c.classList.remove('on')); el.classList.add('on');
+  const cat=el.textContent.trim();
+  const list = cat==='All' ? TITLES : TITLES.filter(o=>o.tags.includes(cat) || getCtags(o).some(c=>c.t===cat));
+  document.getElementById('browse-grid').innerHTML = (list.length?list:TITLES).map(o=>cardHTML(o)).join('');
+}
 
 function renderLibrary(){
   const cont = TITLES.filter(o=>o.prog>0&&o.prog<1);
@@ -1042,8 +1113,11 @@ function openDetail(id){
         <div class="ch-head"><h4>Chapters</h4><div class="ct">${o.ch} total · newest first</div></div>
         ${chs}
       </div>
+      ${communityHTML(o)}
       <div style="height:20px"></div>
     </div>`;
+  detailId=id; cmtChap=Math.min(o.ch, o.read||1);
+  renderCtags(o); renderCmtChips(o); renderComments(o);
   showView('detail');
 }
 
@@ -1083,6 +1157,7 @@ function renderWebtoon(o){
       </div></div>`;
   if(o.pages){   // real imported pages
     o.pages.forEach((s,i)=>{
+      if(i>0) h+=`<div class="wsep"></div>`;            // subtle separator between pages (Mike)
       h+=`<img src="${s}" style="display:block;width:100%" loading="lazy" alt="">`;
       if(i===5 && adsActive()){ h+=`<div style="padding:6px 14px">${adCardHTML()}</div>`; }
     });
@@ -1090,6 +1165,7 @@ function renderWebtoon(o){
     document.getElementById('strip').innerHTML=h; document.getElementById('webtoon').scrollTop=0; return;
   }
   for(let i=0;i<14;i++){
+    if(i>0) h+=`<div class="wsep"></div>`;               // subtle separator between panels (Mike)
     h+=`<div class="slice">${webtoonSlice(o,i)}</div>`;
     if(i===6 && adsActive()){ h+=`<div style="padding:6px 14px">${adCardHTML()}</div>`; }
   }
@@ -1238,8 +1314,163 @@ function goPremiumFromAd(){ adDone=null; closeAdOver(); goPremium(); }
 function chapterEnd(){ showAd('Anuncio · fin del capítulo', function(){ toast('▶ Próximo capítulo (demo)','dot'); }); }
 function rewardedHD(){ closeWall(); showAd('Anuncio premiado', function(){ cur.adHD=true; setTier(); rerenderReader(); toast('HD desbloqueado por este capítulo ✓','dot'); }); }
 
+/* ---------- community: hybrid tags, per-chapter comments, badges ---------- */
+const BADGES={
+  founder:{ic:'⚑',name:'Pionero',hue:'#0ea5e9'},
+  xray:{ic:'✦',name:'X-Ray Master',hue:'#7c5cff'},
+  curator:{ic:'🏷️',name:'Curador de tags',hue:'#3ddc97'},
+  mod:{ic:'🛡️',name:'Moderador',hue:'#ff4d8d'},
+  topfan:{ic:'🔥',name:'Top Fan',hue:'#ffcf6b'},
+};
+const MY_BADGES=['founder','xray','curator'];   // the demo user is a top contributor (gets the frame)
+const CTAG_POOL=[
+  'Peleas épicas','Protagonista cracked','Plot twist real','Arte hermoso','Sin relleno',
+  'Te hace llorar','Villano carismático','Romance lento','Mundo enorme','Bingeable','Final de cap brutal','Banda sonora mental'
+];
+function getCtags(o){
+  if(o._ct) return o._ct;
+  const seen={}, arr=[];
+  for(let k=0;k<7 && arr.length<4;k++){
+    const t=CTAG_POOL[(o.id*5+k*7)%CTAG_POOL.length];
+    if(seen[t]) continue; seen[t]=1;
+    arr.push({t, v: 44 - arr.length*8 + (o.id*3+arr.length*5)%7, mine:false});
+  }
+  o._ct=arr; return arr;
+}
+function renderCtags(o){
+  const arr=getCtags(o);
+  const order=arr.map((c,i)=>({c,i})).sort((a,b)=>b.c.v-a.c.v);
+  const top=order[0];
+  document.getElementById('ctag-seal').innerHTML = (top && top.c.v>=30)
+    ? `<div class="seal">✓ Otaconers Aprobado · <b>${top.c.t}</b></div>` : '';
+  document.getElementById('ctag-row').innerHTML = order.map(({c,i})=>
+    `<button class="ctag ${c.mine?'mine':''}" onclick="voteCtag(${o.id},${i})">${c.t}<i>▲ ${c.v}</i></button>`
+  ).join('') + `<button class="ctag add" onclick="openTagSheet(${o.id})">＋ etiqueta</button>`;
+}
+function voteCtag(id,i){
+  const o=TITLES[id], c=getCtags(o)[i];
+  c.mine=!c.mine; c.v+=c.mine?1:-1;
+  renderCtags(o); toast(c.mine?'👍 Votaste “'+c.t+'”':'Voto quitado');
+}
+function setTagSheet(html){ document.getElementById('tag-sheet-body').innerHTML=html; document.getElementById('tagsheet').classList.add('open'); }
+function closeTagSheet(){ document.getElementById('tagsheet').classList.remove('open'); }
+function openTagSheet(id){
+  const o=TITLES[id], have=getCtags(o).map(c=>c.t);
+  const sugg=CTAG_POOL.map((t,pi)=>({t,pi})).filter(x=>!have.includes(x.t));
+  setTagSheet(`<div class="grab"></div>
+    <h3 style="text-align:left">🏷️ Agregar etiqueta de comunidad</h3>
+    <p class="ws" style="text-align:left;margin-top:6px">Elegí una sugerida (o la tuya). La comunidad la vota y, si pega, sube de peso.</p>
+    <div class="ctag-row" style="margin-top:15px">${
+      sugg.length ? sugg.map(x=>`<button class="ctag add" onclick="addCtag(${id},${x.pi})">＋ ${x.t}</button>`).join('')
+                  : '<span style="color:var(--faint);font-size:12px">Ya están todas 😄</span>'
+    }</div>
+    <button class="btn glass block" style="margin-top:18px" onclick="closeTagSheet()">Listo</button>`);
+}
+function addCtag(id,pi){
+  const o=TITLES[id], t=CTAG_POOL[pi], arr=getCtags(o);
+  closeTagSheet();
+  if(arr.some(c=>c.t===t)) return;
+  arr.push({t, v:1, mine:true});
+  renderCtags(o); toast('🏷️ “'+t+'” agregada — ¡ya suma!','dot');
+}
+
+const COMMENTERS=[
+  {u:'otaku_sora',b:'xray'},{u:'mecha_dani',b:'topfan'},{u:'panelpilot',b:null},
+  {u:'inkfan_22',b:'curator'},{u:'mod_rin',b:'mod'},{u:'lurker_99',b:null},
+  {u:'kaede_stan',b:null},{u:'webtoonW',b:'founder'},
+];
+const CMT_TEXTS=[
+  'Este capítulo me rompió 😭 la última página es otro nivel de arte.',
+  'Tres relecturas y sigo encontrando detalles en los fondos.',
+  'La coreografía de la pelea es de lo mejor que vi este año.',
+  'Ojo la viñeta del medio, hay un foreshadow tremendo 👀 (sin spoilers).',
+  'Pa los nuevos: activen X-Ray, vale oro para no perderse quién es quién.',
+  'El pacing acá es perfecto, ni relleno ni apurado.',
+  'Necesito el próximo cap YA. Bancamos al autor 💜',
+  'Subí a HD para esta escena y se nota un montón el screentone.',
+];
+function avatarHue(u){ const c=G[(u.charCodeAt(0)+u.length)%G.length]; return `linear-gradient(135deg,${c[0]},${c[1]})`; }
+function getComments(o,chap){
+  o._cm=o._cm||{};
+  if(o._cm[chap]) return o._cm[chap];
+  const seed=o.id*13+chap*7, n=3+(seed%2), arr=[];
+  for(let k=0;k<n;k++){
+    const who=COMMENTERS[(seed+k*3)%COMMENTERS.length];
+    arr.push({u:who.u,b:who.b,txt:CMT_TEXTS[(seed+k*5)%CMT_TEXTS.length],likes:3+((seed+k*11)%42),liked:false});
+  }
+  o._cm[chap]=arr; return arr;
+}
+function renderCmtChips(o){
+  const r=o.read||1, hi=Math.min(o.ch, r+1), lo=Math.max(1, hi-4), arr=[];
+  for(let n=lo;n<=hi;n++) arr.push(n);
+  document.getElementById('cmt-chips').innerHTML = arr.map(n=>{
+    const locked = o.read>0 && n>o.read;
+    return `<button class="cmt-chip ${n===cmtChap?'on':''}" onclick="selCmtChap(${o.id},${n})">Cap ${n}${locked?' 🔒':''}</button>`;
+  }).join('');
+}
+function selCmtChap(id,n){ cmtChap=n; renderCmtChips(TITLES[id]); renderComments(TITLES[id]); }
+function commentHTML(o,c,i){
+  const bd=c.b?BADGES[c.b]:null;
+  const frame=bd?`box-shadow:0 0 0 2px ${bd.hue}`:'';
+  return `<div class="cmt">
+    <div class="cmt-av" style="background:${avatarHue(c.u)};${frame}">${c.u[0].toUpperCase()}</div>
+    <div class="cmt-main">
+      <div class="cmt-u">${c.u}${bd?`<span class="ubadge" style="color:${bd.hue};border-color:${bd.hue}66">${bd.ic} ${bd.name}</span>`:''}</div>
+      <div class="cmt-tx">${c.txt}</div>
+      <div class="cmt-acts">
+        <button class="${c.liked?'on':''}" onclick="likeComment(${o.id},${cmtChap},${i})">❤ ${c.likes}</button>
+        <button onclick="toast('Responder (demo)')">Responder</button>
+      </div>
+    </div></div>`;
+}
+function renderComments(o){
+  const thread=document.getElementById('cmt-thread'); if(!thread) return;
+  if(o.read===0){
+    thread.innerHTML=`<div class="cmt-veil">💬 Todavía no empezaste<span>Leé el Capítulo 1 para sumarte a la conversación — sin spoilers.</span></div>`; return;
+  }
+  if(cmtChap>o.read){
+    thread.innerHTML=`<div class="cmt-veil">🔒 Comentarios del Capítulo ${cmtChap}<span>Leé hasta acá para verlos. Cada capítulo tiene su hilo así nadie se come spoilers.</span></div>`; return;
+  }
+  const arr=getComments(o,cmtChap);
+  thread.innerHTML=
+    `<div class="cmt-box"><div class="cmt-av me">A</div>`+
+    `<input class="cmt-input" id="cmt-in" placeholder="Comentar el Capítulo ${cmtChap}…" onkeydown="if(event.key==='Enter')postComment(${o.id})">`+
+    `<button class="cmt-send" onclick="postComment(${o.id})">Enviar</button></div>`+
+    arr.map((c,i)=>commentHTML(o,c,i)).join('');
+}
+function likeComment(id,chap,i){ const c=getComments(TITLES[id],chap)[i]; c.liked=!c.liked; c.likes+=c.liked?1:-1; renderComments(TITLES[id]); }
+function postComment(id){
+  const inp=document.getElementById('cmt-in'); if(!inp||!inp.value.trim()) return;
+  const o=TITLES[id];
+  getComments(o,cmtChap).unshift({u:'Akira (vos)',b:'topfan',txt:inp.value.trim(),likes:0,liked:false});
+  renderComments(o); toast('💬 Comentario publicado','dot');
+}
+function communityHTML(o){
+  return `<div class="community">
+    <div class="cm-sec">
+      <div class="cm-head"><h4>🏷️ Etiquetas</h4><a onclick="openTagSheet(${o.id})">＋ Etiqueta</a></div>
+      <div class="cm-auth"><span class="lbl">Del autor</span>${o.tags.map(t=>`<span>${t}</span>`).join('')}</div>
+      <div id="ctag-seal"></div>
+      <div class="ctag-row" id="ctag-row"></div>
+      <div class="cm-note">Las de la comunidad suman <b>peso por uso</b>, no por quién las puso. La más votada gana el sello <b>Otaconers Aprobado</b>.</div>
+    </div>
+    <div class="cm-sec">
+      <div class="cm-head"><h4>💬 Comentarios por capítulo</h4></div>
+      <div class="cmt-chips" id="cmt-chips"></div>
+      <div id="cmt-thread"></div>
+    </div>
+  </div>`;
+}
+function renderProfileBadges(){
+  const el=document.getElementById('prof-badges'); if(!el) return;
+  el.innerHTML = MY_BADGES.map(k=>{const b=BADGES[k];return `<span class="gbadge" style="color:${b.hue};border-color:${b.hue}55">${b.ic} ${b.name}</span>`;}).join('')
+    + `<span class="gbadge" style="color:#8ff0c4;border-color:#3ddc9755">✓ Otaconer Aprobado <small>nivel 2</small></span>`;
+  const av=document.getElementById('prof-av'); if(av) av.classList.add('framed');
+}
+
 /* ---------- nav ---------- */
 let lastTab='home';
+let detailId=0, cmtChap=1;
 function showView(name){
   ['home','browse','library','premium','profile','detail'].forEach(v=>{
     document.getElementById('view-'+v).classList.toggle('hidden', v!==name);
@@ -1339,7 +1570,7 @@ function renderSEarn(){
        <li>${chk}See exactly <b style="color:#fff">who reads you</b> — your audience is yours</li></ul></div>`;
 }
 
-renderHome(); renderBrowse(); renderLibrary();
+renderHome(); renderBrowse(); renderLibrary(); renderProfileBadges();
 
 /* PWA: register the service worker for offline + installability */
 if('serviceWorker' in navigator){
